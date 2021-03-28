@@ -151,6 +151,22 @@ void GameState::updateInput(const float& dt)
 
 void GameState::updatePlayerInput(const float& dt)
 {
+	/////////////////////////////COLLISION CHECK
+	if (this->player->checkCollision(ball)  || this->ball->getPosition().y < 0) {
+		ball->hit(dt,true);
+		return;
+	}
+
+	if (this->ball->getPosition().x < 0 ||
+		this->ball->getPosition().x > stateData->gfxSettings->resolution.width) {
+		ball->hit(dt, false);
+		return;
+	}
+
+	if (this->ball->getPosition().y > stateData->gfxSettings->resolution.height) {
+		this->endState();
+	}
+	////////////////////////////////////////////
 
 	//Update player input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("MOVE_LEFT"))))
@@ -165,6 +181,8 @@ void GameState::updatePlayerInput(const float& dt)
 		this->player->move(0.f, -1.f, dt);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("MOVE_DOWN"))))
 		this->player->move(0.f, 1.f, dt);*/
+
+
 
 
 }

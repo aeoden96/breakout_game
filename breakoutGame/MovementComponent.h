@@ -12,6 +12,9 @@ private:
 	float acceleration;
 	float deceleration;
 
+	short dirx;
+	short diry;
+
 	sf::Vector2f velocity;
 
 	//Init functions
@@ -28,6 +31,7 @@ public:
 	const bool getState(const short unsigned state) const;
 
 	void move(const float x, const float y, const float& dt);
+	void reflexion(const float& dt, bool horizontal = true);
 	void move(const float& dt);
 	void update(const float& dt);
 

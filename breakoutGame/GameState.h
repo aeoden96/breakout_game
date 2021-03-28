@@ -9,7 +9,7 @@ class GameState : public State
 {
 private:
 	Player* player;
-	Entity* ball;
+	Ball* ball;
 	//PauseMenu* pmenu;
 	Level level;
 	sf::Texture backgroundTexture;

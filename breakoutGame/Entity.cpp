@@ -47,9 +47,9 @@ void Entity::createAnimationComponent(sf::Texture& textureSheet)
 }*/
 
 
-bool Entity::checkCollision(Entity& entity)
+bool Entity::checkCollision(Entity* entity)
 {
-	return (this->hitboxComponent->checkIntersect(entity.sprite.getGlobalBounds()));
+	return (this->hitboxComponent->checkIntersect(entity->sprite.getGlobalBounds()));
 }
 
 //Functions
@@ -57,6 +57,11 @@ void Entity::setPosition(const float x, const float y)
 {
 	this->sprite.setPosition(x, y);
 
+}
+sf::Vector2f Entity::getPosition()
+{
+	return sprite.getPosition();
+	
 }
 void Entity::move(const float dir_x, const float dir_y, const float& dt)
 {

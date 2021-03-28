@@ -34,8 +34,9 @@ public:
 	//void createAnimationComponent(sf::Texture& textureSheet);
 
 	//Functions
-	virtual bool checkCollision(Entity& entity);
+	virtual bool checkCollision(Entity* entity);
 	virtual void setPosition(const float x, const float y);
+	sf::Vector2f  getPosition();
 	//move fn. for entity
 	virtual void move(const float x, const float y, const float& dt);
 	void move(const float& dt);

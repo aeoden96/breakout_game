@@ -21,7 +21,7 @@ Ball::Ball(float x, float y, sf::Texture& texture)
 
 	this->setPosition(x, y);
 
-	this->createHitboxComponent(this->sprite, 22.f, 80.f, 590.f * 0.5f * 0.65f, 200.f * 0.5f * 0.73f);
+	this->createHitboxComponent(this->sprite, 0.f, 0.f, 80.f * 0.5f * 0.65f, 80.f * 0.5f * 0.73f);
 	this->createMovementComponent(300.f, 15.f, 5.f);
 
 	this->sprite.setScale(PLAYER_SIZE_FACTOR, PLAYER_SIZE_FACTOR);
@@ -47,6 +47,10 @@ void Ball::updateAttack()
 	{
 		//this->attacking = true;
 	}
+}
+void Ball::hit(const float& dt,bool horizontal)
+{
+	this->movementComponent->reflexion(dt, horizontal);
 }
 void Ball::updateAnimation(const float& dt) {
 

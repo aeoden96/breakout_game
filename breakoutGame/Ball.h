@@ -18,6 +18,7 @@ class Ball :
 		virtual ~Ball();
 
 		//Functions
+		void hit(const float& dt, bool horizontal = true);
 		void updateAnimation(const float& dt);
 		void updateAttack();
 

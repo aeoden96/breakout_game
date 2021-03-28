@@ -7,6 +7,8 @@ MovementComponent::MovementComponent(
 	sf::Sprite& sprite, float maxVelocity, float acceleration, float deceleration)
 	:sprite(sprite), maxVelocity(maxVelocity), acceleration(acceleration), deceleration(deceleration)
 {
+	dirx = 1;
+	diry = 1;
 }
 
 
@@ -86,16 +88,34 @@ void MovementComponent::move(const float dir_x, const float dir_y, const float& 
 	this->velocity.y += this->acceleration * dir_y;
 
 }
+void MovementComponent::reflexion(const float& dt, bool horizontal)
+{
+	
+	if (horizontal) {
+		diry = -diry;
+		this->velocity.y = -this->velocity.y;
 
+	}
+	else {
+		dirx = -dirx;
+		this->velocity.x = -this->velocity.x;
+
+	}
+
+	
+	
+	
+
+}
 void MovementComponent::move(const float& dt)
 {
 	/*accelerating a sprite until reaches maxVelocity*/
 
 
 	//acceleraton
-	this->velocity.x += this->acceleration * 1.f;
+	this->velocity.x += this->acceleration * dirx;
 
-	this->velocity.y += this->acceleration * 1.f;
+	this->velocity.y += this->acceleration * diry;
 
 }
 
