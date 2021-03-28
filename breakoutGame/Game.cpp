@@ -6,9 +6,6 @@
 //Static functions
 
 
-
-
-//Initializer functions
 void Game::initVariables()
 {
 	this->window = NULL;
@@ -23,35 +20,16 @@ void Game::initGraphicsSettings()
 	this->gfxSettings.loadFromFile("Config/graphics.ini");
 }
 
-void Game::initStateData()
-{
-	this->stateData.window = this->window;
-	this->stateData.gfxSettings = &this->gfxSettings;
-	this->stateData.supportedKeys = &this->supportedKeys;
-	this->stateData.states = &this->states;
-	this->stateData.gridSize = this->gridSize;
-
-}
-
 void Game::initWindow()
 {
 	/*Creates SFML window*/
 
-
-	if (this->gfxSettings.fullscreen)
-		this->window = new sf::RenderWindow(
-			this->gfxSettings.resolution,
-			this->gfxSettings.title,
-			sf::Style::Fullscreen,
-			this->gfxSettings.contextSettings
-		);
-	else
-		this->window = new sf::RenderWindow(
-			this->gfxSettings.resolution,
-			this->gfxSettings.title,
-			sf::Style::Titlebar | sf::Style::Close,
-			this->gfxSettings.contextSettings
-		);
+	this->window = new sf::RenderWindow(
+		this->gfxSettings.resolution,
+		this->gfxSettings.title,
+		(this->gfxSettings.fullscreen) ? sf::Style::Fullscreen :(sf::Style::Titlebar | sf::Style::Close),
+		this->gfxSettings.contextSettings
+	);
 
 	this->window->setFramerateLimit(this->gfxSettings.frameRateLimit);
 	this->window->setVerticalSyncEnabled(this->gfxSettings.vsync);
@@ -83,10 +61,23 @@ void Game::initKeys()
 
 }
 
+void Game::initStateData()
+{
+	//copying pointer values to stateData object.
+	this->stateData.window = this->window;
+	this->stateData.gfxSettings = &this->gfxSettings;
+	this->stateData.supportedKeys = &this->supportedKeys;
+	this->stateData.states = &this->states;
+	this->stateData.gridSize = this->gridSize;
+
+}
+
+
+
 void Game::initStates()
 {
 	std::cout << "\n" << "Game --- init states";
-	this->states.push(new MainMenuState(&this->stateData));//need to send adress of states stack
+	this->states.push(new MainMenuState(&this->stateData));
 	//this->states.push(new GameState(this->window,&this->supportedKeys));
 }
 
@@ -137,14 +128,17 @@ void Game::update()
 {
 	this->updateSFMLEvents();
 
+	//if there is AT LEAST ONE state on stack
 	if (!this->states.empty())
 	{
+		//update the top state
 		this->states.top()->update(this->dt);
 
 		if (this->states.top()->getQuit())
 		{
 
 			this->states.top()->endState();
+			//delete state the top pointer points to
 			delete this->states.top();
 			this->states.pop();
 		}

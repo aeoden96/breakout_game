@@ -1,5 +1,6 @@
 #include "libs.h"
 #include "MainMenuState.h"
+#include "GameState.h"
 #include "Gui.h"
 
 
@@ -132,11 +133,12 @@ void MainMenuState::updateButtons()
 
 
 	//New game
-	/*if (this->buttons["GAME_STATE"]->isPressed())
+	if (this->buttons["GAME_STATE"]->isPressed())
 	{
 		this->states->push(new GameState(this->stateData));
 	}
 	//Settings
+	/*
 	if (this->buttons["SETTINGS_STATE"]->isPressed())
 	{
 		this->states->push(new SettingsState(this->stateData));

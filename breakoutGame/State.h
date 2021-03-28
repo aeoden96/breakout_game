@@ -7,10 +7,15 @@ class Player;
 class GraphicsSettings;
 class State;
 
+
+/// <summary>
+/// Holds state data,
+/// as POINTERS to window,suppKeys,states stack and gfxSettings,and gridSize var.
+/// </summary>
 class StateData
 {
 public:
-	StateData() {}
+	//StateData() {}
 
 	//Variables
 	float gridSize;
@@ -20,13 +25,7 @@ public:
 	GraphicsSettings* gfxSettings;
 };
 
-/*
-Drži POINTER na
-		window
-		Stack STATES -> koji sadrži POINTERE na aktivne STATESe
-		stateData
-		Stack supportedKeys
-*/
+
 class State
 {
 private:
@@ -50,8 +49,6 @@ protected:
 	sf::Vector2f mousePosView;
 	sf::Vector2u mousePosGrid;
 
-
-
 	//Resources
 	std::map<std::string, sf::Texture> textures;
 	//Functions
@@ -65,14 +62,15 @@ public:
 
 	//Accessor
 	const bool& getQuit() const;
-	const bool& getKeytime();
-	/*needs to be defined in child classes of State*/
+	const bool& getKeytime();/*needs to be defined in child classes of State*/
 	void endState();
 	void pauseState();
 	void unpauseState();
 
 	virtual void updateKeytime(const float& dt);
 	virtual void updateMousePositions(sf::View* view = NULL);
+
+
 	virtual void updateInput(const float& dt) = 0;
 	virtual void update(const float& dt) = 0;
 	virtual void render(sf::RenderTarget* target = NULL) = 0;
