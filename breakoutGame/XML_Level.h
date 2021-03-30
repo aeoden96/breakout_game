@@ -9,10 +9,22 @@ using namespace tinyxml2;
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult);  }
 #endif
 
-class Level
+struct BrickType {
+	std::string id;
+	std::string texture;
+	std::string hitPoints;
+	std::string hitSound;
+	std::string breakSound;
+	int breakScore;
+};
+
+class XML_Level
 {
-	
-	XMLDocument xmlDoc;
+public:
+	std::vector<BrickType> brickTypes;
+	std::string brickAlignment;
+
+	XMLDocument* xmlDoc;
 
 	int rowCount;
 	int columnCount;
@@ -20,10 +32,10 @@ class Level
 	int columnSpacing;
 	std::string backgroundTexture;
 
-public:
+
 	void importDataForLevel(int level);
-	Level();
-	~Level();
+	XML_Level(std::string location);
+	~XML_Level();
 
 };
 

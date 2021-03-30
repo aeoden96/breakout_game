@@ -45,7 +45,7 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
+    <ClCompile Include="XML_Level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
@@ -98,7 +98,7 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Level.h">
+    <ClInclude Include="XML_Level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tinyxml2.h">

@@ -5,7 +5,7 @@
 Brick::Brick(unsigned grid_x, unsigned grid_y, float gridSizeF, const sf::Texture& texture, const sf::IntRect& tex_rect,
 	bool collision, short type)
 {
-	this->shape.setSize(sf::Vector2f(gridSizeF, gridSizeF));
+	this->shape.setSize(sf::Vector2f(gridSizeF, gridSizeF/2));
 	this->shape.setFillColor(sf::Color::White);
 	this->shape.setPosition(static_cast<float>(grid_x) * gridSizeF, static_cast <float>(grid_y) * gridSizeF);
 	//this->shape.setOutlineColor(sf::Color::Black);
@@ -22,6 +22,20 @@ Brick::Brick()
 {
 	this->collision = false;
 	this->type = 0;
+
+	
+}
+
+sf::FloatRect Brick::returnPosition() {
+
+	return this->shape.getGlobalBounds();
+}
+
+void Brick::hit()
+{
+	if (collision) {
+		collision = false;
+	}
 }
 
 
@@ -52,5 +66,6 @@ void Brick::update()
 
 void Brick::render(sf::RenderTarget& target)
 {
-	target.draw(this->shape);
+	if(collision)
+		target.draw(this->shape);
 }

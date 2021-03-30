@@ -153,7 +153,7 @@
     <ClCompile Include="GraphicsSettings.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="HitboxComponent.cpp" />
-    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="XML_Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
@@ -172,7 +172,7 @@
     <ClInclude Include="GraphicsSettings.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="HitboxComponent.h" />
-    <ClInclude Include="Level.h" />
+    <ClInclude Include="XML_Level.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="MovementComponent.h" />

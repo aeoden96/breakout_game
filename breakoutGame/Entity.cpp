@@ -52,6 +52,11 @@ bool Entity::checkCollision(Entity* entity)
 	return (this->hitboxComponent->checkIntersect(entity->sprite.getGlobalBounds()));
 }
 
+bool Entity::checkCollision(sf::FloatRect rect)
+{
+	return (this->hitboxComponent->checkIntersect(rect));
+}
+
 //Functions
 void Entity::setPosition(const float x, const float y)
 {

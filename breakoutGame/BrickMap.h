@@ -1,6 +1,8 @@
 #pragma once
 #include"libs.h"
 #include"Brick.h"
+#include "XML_Level.h"
+#include"Entity.h"
 
 class BrickMap
 {
@@ -9,6 +11,7 @@ private:
 	unsigned gridSizeU;
 	unsigned layers;
 
+	XML_Level* levelInfo;
 	sf::Vector2u maxSize;
 	std::vector< std::vector< std::vector<Brick* > > > map; //XYZ coord 
 	std::string textureFile;
@@ -18,7 +21,11 @@ private:
 	void clear();
 
 public:
+
+	int checkCollision(Entity* e);
+
 	BrickMap(float gridSize, unsigned width, unsigned hight, std::string textureFile);
+	BrickMap(float gridSize, unsigned width, unsigned hight, std::string textureFile,XML_Level* levelInfo);
 	virtual ~BrickMap();
 
 	//Accessors 

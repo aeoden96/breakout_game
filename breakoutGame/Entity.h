@@ -35,6 +35,7 @@ public:
 
 	//Functions
 	virtual bool checkCollision(Entity* entity);
+	bool checkCollision(sf::FloatRect rect);
 	virtual void setPosition(const float x, const float y);
 	sf::Vector2f  getPosition();
 	//move fn. for entity

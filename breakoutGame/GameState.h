@@ -2,7 +2,8 @@
 #include "State.h"
 #include "Player.h"
 #include "Ball.h"
-#include "Level.h"
+#include "XML_Level.h"
+#include "BrickMap.h"
 //#include "PauseMenu.h"
 //#include "TileMap.h"
 class GameState : public State
@@ -11,12 +12,12 @@ private:
 	Player* player;
 	Ball* ball;
 	//PauseMenu* pmenu;
-	Level level;
+	XML_Level* level;
 	sf::Texture backgroundTexture;
 	sf::RectangleShape background;
 	sf::Font font;
 
-	//TileMap* tileMap;
+	BrickMap* brickMap;
 	//Functions
 
 	void initKeybinds();
@@ -25,7 +26,8 @@ private:
 	void initBackground();
 	void initPlayers();
 	void initPauseMenu();
-	void initTileMap();
+	void initXMLLevel();
+	void initBrickMap();
 public:
 	GameState(StateData* stateData);
 	virtual ~GameState();

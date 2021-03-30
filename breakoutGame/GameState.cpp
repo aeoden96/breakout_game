@@ -82,7 +82,7 @@ void GameState::initPlayers()
 
 	this->player->setTexture(textures["PLAYER_TEXTURE"]);
 
-	this->ball = new Ball(500, 500, this->textures["BALL_TEXTURE"]);
+	this->ball = new Ball(500, 600, this->textures["BALL_TEXTURE"]);
 
 	this->ball->setTexture(textures["BALL_TEXTURE"]);
 
@@ -96,9 +96,17 @@ void GameState::initPauseMenu()
 	//this->pmenu->addButton("QUIT", 930.f, "Quit");
 }
 
-void GameState::initTileMap()
+void GameState::initXMLLevel()
+{
+	this->level = new XML_Level("Resources/LevelData/level1.xml");
+	this->level->importDataForLevel(0);
+}
+
+void GameState::initBrickMap()
 {//why gamestate has tilemap?
-	//this->tileMap = new TileMap(this->stateData->gridSize, 10, 10, "Resources/Images/Tiles/tilesheet1.png");
+
+	this->brickMap = new BrickMap(
+		/*this->stateData->gridSize*/ 100, 10, 10, "Resources/Images/box_textures.png",this->level);
 }
 
 //Const/destr
@@ -113,18 +121,21 @@ GameState::GameState(StateData* stateData)
 	this->initBackground();
 	this->initPauseMenu();
 	this->initPlayers();
-	this->initTileMap();
+	this->initXMLLevel();
+	this->initBrickMap();
 
-	this->level.importDataForLevel(0);
 
 }
 
 GameState::~GameState()
 {
 	std::cout << "\n" << "GameState destr";
-	//delete this->player;
+
+	delete this->level;
+	delete this->player;
+	delete this->ball;
 	//delete this->pmenu;
-	//delete this->tileMap;
+	delete this->brickMap;
 }
 
 void GameState::updatePauseMenuButtons()
@@ -166,6 +177,13 @@ void GameState::updatePlayerInput(const float& dt)
 	if (this->ball->getPosition().y > stateData->gfxSettings->resolution.height) {
 		this->endState();
 	}
+
+	int side = this->brickMap->checkCollision(ball);
+
+	if(side==1)
+		ball->hit(dt, true);
+
+
 	////////////////////////////////////////////
 
 	//Update player input
@@ -228,6 +246,8 @@ void GameState::render(sf::RenderTarget* target)
 	this->player->render(*target);
 
 	this->ball->render(*target);
+
+	this->brickMap->render(*target);
 
 	if (this->paused)//Pause menu render
 	{

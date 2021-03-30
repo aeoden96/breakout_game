@@ -17,6 +17,8 @@ public:
 	Brick();
 	virtual ~Brick();
 	//Functions
+	sf::FloatRect returnPosition();
+	void hit();
 	const std::string getAsString() const;
 	void update();
 	void render(sf::RenderTarget& target);

@@ -21,8 +21,32 @@ void BrickMap::clear()
 
 }
 
+int BrickMap::checkCollision(Entity* e)
+{
+	for (size_t x = 0; x < this->maxSize.x; x++)
+	{
+		for (size_t y = 0; y < maxSize.y; y++)
+		{
+			if (e->checkCollision(this->map[x][y][0]->returnPosition()))
+			{
+				this->map[x][y][0]->hit();
+				return 1;
+			}
+		}
+	}
+
+
+	
+
+
+
+	return 0;
+}
+
 BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string textureFile)
 {
+	
+
 	std::cout << "\n" << "TileMap KONSTR ";
 	this->textureFile = textureFile;
 	this->gridSizeF = gridSize;
@@ -49,6 +73,122 @@ BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string 
 
 	if (!this->tileTextureSheet.loadFromFile(textureFile))
 		std::cout << "ERROR:TILEMAP:FAILED_TO_LOAD_TILE_TEXTURE_SHEET::FILENAME:" << textureFile << "\n";
+
+
+	
+}
+
+BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string textureFile, XML_Level* levelInfo)
+{
+	std::cout << "\nBRICKMAP::CONSTRUCTOR";
+	this->levelInfo = levelInfo;
+	this->textureFile = textureFile;
+	std::string brickAlignment =this->levelInfo->brickAlignment;
+
+	if (!this->tileTextureSheet.loadFromFile(textureFile))
+		std::cout << "ERROR:TILEMAP:FAILED_TO_LOAD_TILE_TEXTURE_SHEET::FILENAME:" << textureFile << "\n";
+
+	enum BRICK_TYPE { M,H,I,S,EMPTY};
+
+
+	this->gridSizeF = gridSize;
+	this->gridSizeU = static_cast<unsigned>(this->gridSizeF);
+	this->maxSize.x = this->levelInfo->columnCount;
+	this->maxSize.y = this->levelInfo->rowCount;
+	this->layers = 1;
+
+
+
+	/*instead of pushback, we are using resize to set values in the map at once*/
+	this->map.resize(this->maxSize.x, std::vector<  std::vector<Brick*>>());
+
+
+
+
+	for (size_t x = 0; x < this->maxSize.x; x++)
+	{
+		for (size_t y = 0; y < maxSize.y; y++)
+		{
+			this->map[x].resize(this->maxSize.y, std::vector<Brick*>());
+
+			for (size_t z = 0; z < this->layers; z++)
+			{
+				this->map[x][y].resize(this->layers, NULL);
+			}
+		}
+	}
+	std::cout << "\nMAP SIZE" << this->map.size();
+	std::cout << "\nMAP SIZE" << this->map.back().size();
+
+	std::map<BRICK_TYPE,char> brickTypeMap;
+
+	brickTypeMap[M] = 'M';
+	brickTypeMap[H] = 'H';
+	brickTypeMap[I] = 'I';
+	brickTypeMap[S] = 'S';
+	brickTypeMap[EMPTY] = ' ';
+
+
+	int i = 0;
+
+	int red = 0;
+	int stupac = 0;
+	std::cout << "\nSTART";
+	std::cout << brickAlignment;
+	std::cout << "FIN\n";
+
+	for (char& c : brickAlignment) {
+		switch (c) {
+		case 'M':
+			stupac++;
+			
+			break;
+		case 'H':
+			stupac++;
+			
+			break;
+		case 'I':
+			stupac++;
+	
+			break;
+		case 'S':
+			stupac++;
+
+			break;
+		case ' ':
+			
+			
+			break;
+		case '\n':
+
+			red++;
+			stupac = 0;
+			
+			
+			break;
+		}
+		
+		if(c!=' ' && c!= '\n')
+			std::cout << "\n" << stupac-1 << " "<< red << " "  << c;
+
+		this->gridSizeU = 400;
+
+		if (c != ' ' && c != '\n')
+			this->map[stupac-1][red][0] = new Brick(
+				stupac, red,
+				200,
+				this->tileTextureSheet,
+				sf::IntRect(0, 0, this->gridSizeU, this->gridSizeU/2),
+				true,
+				0);
+
+
+		i++;
+	}
+
+	
+	
+	
 }
 
 BrickMap::~BrickMap()
@@ -172,6 +312,7 @@ void BrickMap::saveToFile(const std::string fileName)
 
 void BrickMap::loadFromFile(const std::string fileName)
 {
+	
 	std::ifstream in_file;
 
 	in_file.open(fileName);
@@ -204,6 +345,7 @@ void BrickMap::loadFromFile(const std::string fileName)
 
 		std::cout << "LOADED " << size.x << " " << size.x << " " << gridSizeU << " " << layers << " " << textureFile << "\n";
 
+		
 		this->clear();
 
 		/*instead of pushback, we are using resize to set values in the map at once*/
