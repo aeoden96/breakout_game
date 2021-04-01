@@ -3,6 +3,9 @@
 #include"Brick.h"
 #include "XML_Level.h"
 #include"Entity.h"
+#include "Ball.h"
+#include "Player.h"
+#include "ScoreSystem.h"
 
 class BrickMap
 {
@@ -11,21 +14,32 @@ private:
 	unsigned gridSizeU;
 	unsigned layers;
 
+	ScoreSystem* scoreSystem;
 	XML_Level* levelInfo;
-	sf::Vector2u maxSize;
+	sf::Sound sound;
+	
 	std::vector< std::vector< std::vector<Brick* > > > map; //XYZ coord 
 	std::string textureFile;
 	sf::Texture tileTextureSheet;
+	//std::map<BrickT,sf::IntRect> crackMap;
 	//now we can have null pointers in entire map
 
 	void clear();
 
 public:
+	sf::Vector2u maxSize;
 
-	int checkCollision(Entity* e);
+	Brick* returnBrick(int i, int j);
+	void crackIt(int i, int j);
 
 	BrickMap(float gridSize, unsigned width, unsigned hight, std::string textureFile);
-	BrickMap(float gridSize, unsigned width, unsigned hight, std::string textureFile,XML_Level* levelInfo);
+	BrickMap(float gridSize,
+		unsigned width, 
+		unsigned hight, 
+		std::string textureFile,
+		XML_Level* levelInfo,
+		ScoreSystem* scoreSystem,
+		sf::SoundBuffer* soundBuffer);
 	virtual ~BrickMap();
 
 	//Accessors 
@@ -34,6 +48,10 @@ public:
 	//Functions 
 	void saveToFile(const std::string fileName);
 	void loadFromFile(const std::string fileName);
+
+	//void updateBrickCollision(Entity* entity, const float& dt);
+	
+	//void updateBricks(Entity* entity, const float& dt);
 
 	void addTile(const unsigned x, const unsigned y, const unsigned z, const sf::IntRect& tex_rect, const bool& collision, const bool& type);
 	void removeTile(const unsigned x, const unsigned y, const unsigned z);

@@ -38,9 +38,11 @@ public:
 	bool checkCollision(sf::FloatRect rect);
 	virtual void setPosition(const float x, const float y);
 	sf::Vector2f  getPosition();
+	sf::FloatRect getOuterBounds();
+	void stopVelocity(char axis);
 	//move fn. for entity
 	virtual void move(const float x, const float y, const float& dt);
 	void move(const float& dt);
-	virtual void update(const float& dt);
-	virtual void render(sf::RenderTarget& target);
+	void update(const float& dt);
+	void render(sf::RenderTarget& target);
 };

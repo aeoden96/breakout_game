@@ -68,6 +68,24 @@ sf::Vector2f Entity::getPosition()
 	return sprite.getPosition();
 	
 }
+sf::FloatRect Entity::getOuterBounds()
+{
+	return this->sprite.getGlobalBounds();
+}
+void Entity::stopVelocity(char axis)
+{
+	if (axis == 'x') {
+		this->movementComponent->stopVelocityX();
+	}
+	else if (axis == 'y') {
+		this->movementComponent->stopVelocityY();
+
+	}
+	else {
+		this->movementComponent->stopVelocity();
+
+	}
+}
 void Entity::move(const float dir_x, const float dir_y, const float& dt)
 {
 	if (this->movementComponent)

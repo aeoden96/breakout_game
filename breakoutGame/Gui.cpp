@@ -23,7 +23,6 @@ gui::Button::Button(float x, float y, float width, float height,
 	id(id)
 
 {
-	std::cout << "\n" << "Button constr : " << text;
 	this->buttonState = BTN_IDLE;
 
 	this->shape.setPosition(sf::Vector2f(x, y));

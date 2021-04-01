@@ -23,17 +23,17 @@ void GameState::initKeybinds()
 	}
 	ifs.close();
 
-	std::cout << "\nGameState:Keybinds map: \n";
+	/*std::cout << "\nGameState:Keybinds map: \n";
 	for (auto i : this->keybinds)
 	{
 		std::cout << "   > " << i.first << " " << i.second << "\n";
-	}
+	}*/
 }
 
 void GameState::initFonts()
 {
 
-	std::cout << "\n" << "---MainMenuState initFonts  ";
+	//std::cout << "\n" << "---MainMenuState initFonts  ";
 	if (!this->font.loadFromFile("Fonts/Dosis-Light.ttf"))
 	{
 		throw("ERROR::GameState::COULD_NOT_LOAD_FONT");
@@ -57,7 +57,7 @@ void GameState::initTextures()
 		throw "ERROR:GAME_STATE:COULD_NOT_LOAD_PLAYER_TEXTURE";
 	}
 
-	std::cout << "\n\nGamestate::initTextures player tex\n";
+	//std::cout << "\n\nGamestate::initTextures player tex\n";
 
 
 }
@@ -78,11 +78,17 @@ void GameState::initBackground()
 
 void GameState::initPlayers()
 {
-	this->player = new Player(800, 800, this->textures["PLAYER_TEXTURE"]);
+	this->player = new Player(
+		this->stateData->gfxSettings->resolution.width  * 0.5f, 
+		this->stateData->gfxSettings->resolution.height * 0.8f, 
+		this->textures["PLAYER_TEXTURE"]);
 
 	this->player->setTexture(textures["PLAYER_TEXTURE"]);
 
-	this->ball = new Ball(500, 600, this->textures["BALL_TEXTURE"]);
+	this->ball = new Ball(
+		this->stateData->gfxSettings->resolution.width * 0.5f,
+		this->stateData->gfxSettings->resolution.height * 0.5f
+		, this->textures["BALL_TEXTURE"]);
 
 	this->ball->setTexture(textures["BALL_TEXTURE"]);
 
@@ -92,8 +98,8 @@ void GameState::initPlayers()
 
 void GameState::initPauseMenu()
 {
-	//this->pmenu = new PauseMenu(*this->window, this->font);
-	//this->pmenu->addButton("QUIT", 930.f, "Quit");
+	this->pmenu = new PauseMenu(*this->window, this->font);
+	this->pmenu->addButton("QUIT", 930.f, "Quit");
 }
 
 void GameState::initXMLLevel()
@@ -106,51 +112,75 @@ void GameState::initBrickMap()
 {//why gamestate has tilemap?
 
 	this->brickMap = new BrickMap(
-		/*this->stateData->gridSize*/ 100, 10, 10, "Resources/Images/box_textures.png",this->level);
+		/*this->stateData->gridSize*/ 100, 10, 10,
+		"Resources/Images/box_textures.png",
+		this->level,
+		this->scoreSystem,
+		&buffer);
 }
 
+void GameState::initScoreSystem() {
+	this->scoreSystem = new ScoreSystem(level,font);
+	
+}
+void GameState::initCollisionSystem() {
+	this->collisionSystem =
+		new CollisionSystem(ball, player, brickMap,scoreSystem);
+
+}
+void GameState::loadSound() {
+	if (!buffer.loadFromFile("Resources/Sounds/break_sound1.wav"))
+		return;
+}
 //Const/destr
 GameState::GameState(StateData* stateData)
 	:State(stateData)
 {
-	std::cout << "GameState constructor \n";
+	std::cout << "\nGameState --- CONSTRUCTOR \n";
 
+	this->initXMLLevel();
+	this->loadSound();
 	this->initKeybinds();
 	this->initFonts();
 	this->initTextures();
 	this->initBackground();
 	this->initPauseMenu();
 	this->initPlayers();
-	this->initXMLLevel();
+	this->initScoreSystem();
 	this->initBrickMap();
-
+	this->initCollisionSystem();
 
 }
 
 GameState::~GameState()
 {
-	std::cout << "\n" << "GameState destr";
+	std::cout << "\nGameState --- DESTRUCTOR";
 
 	delete this->level;
 	delete this->player;
 	delete this->ball;
-	//delete this->pmenu;
+	delete this->pmenu;
 	delete this->brickMap;
+	delete this->scoreSystem;
 }
 
 void GameState::updatePauseMenuButtons()
 {
-	/*if (this->pmenu->isButtonPressed("QUIT"))
+	if (this->pmenu->isButtonPressed("QUIT"))
 	{
 		this->endState();
-	}*/
+	}
+}
+
+void GameState::updateCollisions(const float& dt) {
+	this->collisionSystem->update(dt);	
 }
 
 void GameState::updateInput(const float& dt)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("Close"))) && this->getKeytime())
 	{
-		this->endState();
+		//this->endState();
 
 
 		if (!this->paused)
@@ -160,31 +190,14 @@ void GameState::updateInput(const float& dt)
 	}
 }
 
+void GameState::updateGameState() {
+	if (this->scoreSystem->gameState() == gameState::LOST)
+		this->endState();
+}	
+
 void GameState::updatePlayerInput(const float& dt)
 {
-	/////////////////////////////COLLISION CHECK
-	if (this->player->checkCollision(ball)  || this->ball->getPosition().y < 0) {
-		ball->hit(dt,true);
-		return;
-	}
-
-	if (this->ball->getPosition().x < 0 ||
-		this->ball->getPosition().x > stateData->gfxSettings->resolution.width) {
-		ball->hit(dt, false);
-		return;
-	}
-
-	if (this->ball->getPosition().y > stateData->gfxSettings->resolution.height) {
-		this->endState();
-	}
-
-	int side = this->brickMap->checkCollision(ball);
-
-	if(side==1)
-		ball->hit(dt, true);
-
-
-	////////////////////////////////////////////
+	
 
 	//Update player input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("MOVE_LEFT"))))
@@ -207,6 +220,8 @@ void GameState::updatePlayerInput(const float& dt)
 void GameState::updateBallPosition(const float& dt) {
 	this->ball->move(dt);
 }
+
+
 void GameState::update(const float& dt)
 {
 	this->updateMousePositions();
@@ -216,17 +231,20 @@ void GameState::update(const float& dt)
 	if (!this->paused) //unpaused update
 	{
 		this->updatePlayerInput(dt); //update keyboard player movement
-
+		this->updateCollisions(dt);
 		this->updateBallPosition(dt);
 
 		this->player->update(dt); 
-
 		this->ball->update(dt);
+		this->scoreSystem->update();
+
+		this->updateGameState();
+
 	}
 	else if (this->paused) //Paused update
 	{
 
-		//this->pmenu->update(this->mousePosWindow);
+		this->pmenu->update(this->mousePosWindow);
 		this->updatePauseMenuButtons();
 
 	}
@@ -241,17 +259,17 @@ void GameState::render(sf::RenderTarget* target)
 
 	target->draw(this->background);
 
-	//this->map.render(*target);
-
 	this->player->render(*target);
 
 	this->ball->render(*target);
 
 	this->brickMap->render(*target);
 
+	this->scoreSystem->render(*target);
+
 	if (this->paused)//Pause menu render
 	{
-		///this->pmenu->render(*target);
+		this->pmenu->render(*target);
 	}
 
 

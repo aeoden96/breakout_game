@@ -1,6 +1,5 @@
 #include "BrickMap.h"
 
-
 void BrickMap::clear()
 {
 	for (size_t x = 0; x < this->maxSize.x; x++)
@@ -21,32 +20,46 @@ void BrickMap::clear()
 
 }
 
-int BrickMap::checkCollision(Entity* e)
-{
-	for (size_t x = 0; x < this->maxSize.x; x++)
-	{
-		for (size_t y = 0; y < maxSize.y; y++)
-		{
-			if (e->checkCollision(this->map[x][y][0]->returnPosition()))
-			{
-				this->map[x][y][0]->hit();
-				return 1;
-			}
-		}
-	}
+Brick* BrickMap::returnBrick(int i,int j) {
+	return this->map[i][j][0];
+}
 
+void BrickMap::crackIt(int i, int j)
+{
+	int crackNum = this->map[i][j][0]->getCrackNum();
+	BrickT type = this->map[i][j][0]->getBrickType();
+
+	crackNum = this->levelInfo->brickMap.at(type).hitPoints - crackNum;
 
 	
+	int brickIndex = 0;
 
+	switch (type) {
+	case SOFT:
+		brickIndex = 0;
+		break;
+	case MEDUIM:
+		brickIndex = 1;
+		break;
+	case HARD:
+		brickIndex = 2;
+		break;
+	case INF:
+		brickIndex = 3;
+		break;
 
+	}
+	this->map[i][j][0]->crackIt(400 * brickIndex, 200*(crackNum+1), this->gridSizeU, (int)(this->gridSizeU * 0.5f));
 
-	return 0;
+	std::cout << "\ncrackIt " << brickIndex << " " << crackNum ;
+
+	sound.play();
+	
 }
 
 BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string textureFile)
 {
 	
-
 	std::cout << "\n" << "TileMap KONSTR ";
 	this->textureFile = textureFile;
 	this->gridSizeF = gridSize;
@@ -78,9 +91,15 @@ BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string 
 	
 }
 
-BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string textureFile, XML_Level* levelInfo)
+BrickMap::BrickMap(float gridSize,
+	unsigned width, unsigned height,
+	std::string textureFile, 
+	XML_Level* levelInfo,
+	ScoreSystem* scoreSystem,
+	sf::SoundBuffer* sb)
 {
-	std::cout << "\nBRICKMAP::CONSTRUCTOR";
+	this->scoreSystem = scoreSystem;
+	std::cout << "\nBRICKMAP --- CONSTRUCTOR";
 	this->levelInfo = levelInfo;
 	this->textureFile = textureFile;
 	std::string brickAlignment =this->levelInfo->brickAlignment;
@@ -90,7 +109,7 @@ BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string 
 
 	enum BRICK_TYPE { M,H,I,S,EMPTY};
 
-
+	this->sound.setBuffer(*sb);
 	this->gridSizeF = gridSize;
 	this->gridSizeU = static_cast<unsigned>(this->gridSizeF);
 	this->maxSize.x = this->levelInfo->columnCount;
@@ -117,43 +136,42 @@ BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string 
 			}
 		}
 	}
-	std::cout << "\nMAP SIZE" << this->map.size();
-	std::cout << "\nMAP SIZE" << this->map.back().size();
+	
 
-	std::map<BRICK_TYPE,char> brickTypeMap;
+	std::map<int,char> brickTypeMap;
 
-	brickTypeMap[M] = 'M';
-	brickTypeMap[H] = 'H';
-	brickTypeMap[I] = 'I';
-	brickTypeMap[S] = 'S';
-	brickTypeMap[EMPTY] = ' ';
+	brickTypeMap[0] = 'S';
+	brickTypeMap[1] = 'M';
+	brickTypeMap[2] = 'H';
+	brickTypeMap[3] = 'I';
+	brickTypeMap[4] = ' ';
 
 
 	int i = 0;
-
+	int brickType = 0;
 	int red = 0;
 	int stupac = 0;
-	std::cout << "\nSTART";
-	std::cout << brickAlignment;
-	std::cout << "FIN\n";
+	//std::cout << "\nSTART";
+	//std::cout << brickAlignment;
+	//std::cout << "FIN\n";
 
 	for (char& c : brickAlignment) {
 		switch (c) {
+		case 'S':
+			stupac++;
+			brickType = 0;
+			break;
 		case 'M':
 			stupac++;
-			
+			brickType = 1;
 			break;
 		case 'H':
 			stupac++;
-			
+			brickType = 2;
 			break;
 		case 'I':
 			stupac++;
-	
-			break;
-		case 'S':
-			stupac++;
-
+			brickType = 3;
 			break;
 		case ' ':
 			
@@ -168,19 +186,28 @@ BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string 
 			break;
 		}
 		
-		if(c!=' ' && c!= '\n')
-			std::cout << "\n" << stupac-1 << " "<< red << " "  << c;
+		//if(c!=' ' && c!= '\n')
+		//	std::cout << "\n" << stupac-1 << " "<< red << " "  << c;
 
 		this->gridSizeU = 400;
 
+		int screenW = 1920;
+		int screenH = 1080;
+
+		int offset = 3;
+
 		if (c != ' ' && c != '\n')
-			this->map[stupac-1][red][0] = new Brick(
-				stupac, red,
-				200,
+			this->map[(stupac-1)][red][0] = new Brick(
+				(stupac-1), red,
+				/*screenW / (maxSize.x+3)*/ 92.85f,
+				screenH / (20), 
 				this->tileTextureSheet,
-				sf::IntRect(0, 0, this->gridSizeU, this->gridSizeU/2),
+				sf::IntRect(400* brickType, 0, this->gridSizeU, this->gridSizeU*0.5),
 				true,
-				0);
+				0, 
+				static_cast<BrickT>(brickTypeMap[brickType]),
+				levelInfo->brickMap.at(static_cast<BrickT>(brickTypeMap[brickType])).hitPoints
+				);
 
 
 		i++;
@@ -237,7 +264,7 @@ void BrickMap::addTile(const unsigned x, const unsigned y, const unsigned z, con
 		if (this->map[x][y][z] == NULL)
 		{
 			/*OK to add tile.*/
-			this->map[x][y][z] = new Brick(x, y, this->gridSizeF, this->tileTextureSheet, tex_rect, collision, type);
+			//this->map[x][y][z] = new Brick(x, y, this->gridSizeF, this->tileTextureSheet, tex_rect, collision, type);
 			std::cout << "DEBUG: ADDED TILE\n ";
 		}
 	}
@@ -370,13 +397,13 @@ void BrickMap::loadFromFile(const std::string fileName)
 		//Load all tiles
 		while (in_file >> x >> y >> z >> trX >> trY >> collision >> type)
 		{
-			this->map[x][y][z] = new Brick(
+			/*this->map[x][y][z] = new Brick(
 				x, y,
 				gridSizeF,
 				this->tileTextureSheet,
 				sf::IntRect(trX, trY, this->gridSizeU, this->gridSizeU),
 				collision,
-				type);
+				type);*/
 			std::cout << "LOADED " << x << " " << y << "\n";
 		}
 
@@ -388,3 +415,4 @@ void BrickMap::loadFromFile(const std::string fileName)
 
 	in_file.close();
 }
+

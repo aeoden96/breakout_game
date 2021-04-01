@@ -1,6 +1,7 @@
 #include "libs.h"
 #include "MainMenuState.h"
 #include "GameState.h"
+#include "SettingsState.h"
 #include "Gui.h"
 
 
@@ -23,10 +24,13 @@ void MainMenuState::initBackground()
 
 }
 
+
+
+
 void MainMenuState::initFonts()
 {
 
-	std::cout << "\n" << "---MainMenuState initFonts  ";
+	
 	if (!this->font.loadFromFile("Fonts/Dosis-Light.ttf"))
 	{
 		throw("ERROR::MAINMENUSTATE::COULD_NOT_LOAD_FONT");
@@ -35,7 +39,7 @@ void MainMenuState::initFonts()
 
 void MainMenuState::initKeybinds()
 {
-	std::cout << "\n" << "---MainMenuState initkeyBinds  ";
+	
 
 	std::ifstream ifs("Config/mainmenustate_keybinds.ini");
 
@@ -65,7 +69,6 @@ void MainMenuState::initKeybinds()
 void MainMenuState::initButtons()
 {
 
-	std::cout << "\n" << "---MainMenuState initButtons  ";
 	this->buttons["GAME_STATE"] = new gui::Button(
 		60, 60, 150, 50,
 		&this->font, "New Game", 50,
@@ -93,7 +96,7 @@ void MainMenuState::initButtons()
 MainMenuState::MainMenuState(StateData* stateData)
 	:State(stateData)
 {
-	std::cout << "\n" << "MainMenuState constr : ";
+	std::cout << "\n" << "MainMenuState --- CONSTRUCTOR : ";
 	this->initVariables(); //no vars
 	this->initBackground();
 	this->initFonts();
@@ -103,7 +106,7 @@ MainMenuState::MainMenuState(StateData* stateData)
 
 MainMenuState::~MainMenuState()
 {
-	std::cout << "\n" << "MainMenuState destr";
+	std::cout << "\n" << "MainMenuState --- DESTRUCTOR";
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != this->buttons.end(); ++it)
 	{
@@ -138,11 +141,11 @@ void MainMenuState::updateButtons()
 		this->states->push(new GameState(this->stateData));
 	}
 	//Settings
-	/*
+	
 	if (this->buttons["SETTINGS_STATE"]->isPressed())
 	{
 		this->states->push(new SettingsState(this->stateData));
-	}
+	}/*
 	//Editor state
 	if (this->buttons["EDITOR_STATE"]->isPressed())
 	{

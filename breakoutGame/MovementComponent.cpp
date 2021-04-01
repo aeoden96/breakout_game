@@ -9,6 +9,13 @@ MovementComponent::MovementComponent(
 {
 	dirx = 1;
 	diry = 1;
+	this->currState = std::pair<movement_states, movement_states>(movement_states::IDLE, movement_states::IDLE);
+
+
+
+
+
+
 }
 
 
@@ -107,15 +114,43 @@ void MovementComponent::reflexion(const float& dt, bool horizontal)
 	
 
 }
+
+void MovementComponent::stopVelocity()
+{
+	/* Resets the velocity to 0.*/
+
+	this->velocity.x = 0.f;
+	this->velocity.y = 0.f;
+}
+
+void MovementComponent::stopVelocityX()
+{
+	/* Resets the velocity x to 0.*/
+
+	this->velocity.x = 0.f;
+}
+
+void MovementComponent::stopVelocityY()
+{
+	/* Resets the velocity y to 0.*/
+
+	this->velocity.y = 0.f;
+}
+
 void MovementComponent::move(const float& dt)
 {
 	/*accelerating a sprite until reaches maxVelocity*/
-
+	if (this->velocity.x > 0) {
+		currState.first = movement_states::MOVING_RIGHT;
+	}
+	else if(this->velocity.x < 0) {
+		currState.first = movement_states::MOVING_LEFT;
+	}
 
 	//acceleraton
-	this->velocity.x += this->acceleration * dirx;
+	this->velocity.x += this->acceleration * dirx*2;
 
-	this->velocity.y += this->acceleration * diry;
+	this->velocity.y += this->acceleration * diry*2;
 
 }
 
@@ -125,27 +160,38 @@ void MovementComponent::update(const float& dt)
 	Decelerates the sprite and controls max velocity.
 	Moves the sprite.
 	*/
+
+	/*bool posVelocity = this->velocity.x > 0.f;
+	int negFactor = (this->velocity.x > 0.f) ? -1 : 1;
+
+
+	this->velocity.x = posVelocity ?
+		std::min(this->velocity.x, this->maxVelocity) :
+		std::max(this->velocity.x, -this->maxVelocity);
+
+	this->velocity.x += deceleration * negFactor;
+
+	this->velocity.x = posVelocity ?
+		std::max(this->velocity.x, this->maxVelocity) :
+		std::min(this->velocity.x, -this->maxVelocity);
+
+*/
+
 	if (this->velocity.x > 0.f) //check for positive x 
 	{
 		//maxVelocity check x positive
-		if (this->velocity.x > this->maxVelocity)
-			this->velocity.x = this->maxVelocity;
-
+		this->velocity.x = std::min(this->velocity.x, this->maxVelocity);
 		//Deceleration x positive
 		this->velocity.x -= deceleration;
-		if (this->velocity.x < 0.f)
-			this->velocity.x = 0.f;
-
+		this->velocity.x = std::max(0.f, this->velocity.x);
 	}
 	else if (this->velocity.x < 0.f)//check for negative x 
 	{
 		//maxVelocity check x negative
-		if (this->velocity.x < -this->maxVelocity)
-			this->velocity.x = -this->maxVelocity;
+		this->velocity.x = std::max(this->velocity.x, -this->maxVelocity);
 		//Deceleration x negative
 		this->velocity.x += deceleration;
-		if (this->velocity.x > 0.f)
-			this->velocity.x = 0.f;
+		this->velocity.x = std::min(this->velocity.x , 0.f);
 	}
 
 	if (this->velocity.y > 0.f) //check for positive y 

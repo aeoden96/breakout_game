@@ -58,17 +58,25 @@ void XML_Level::importDataForLevel(int level)
 		if (brickType == nullptr) break;
 
 
-		temp.id =			brickType->Attribute("Id");
+		temp.id =			brickType->Attribute("Id")[0];
 		temp.texture =		brickType->Attribute("Texture");
 		temp.breakSound=	brickType->Attribute("BreakSound");
-		temp.hitPoints =	brickType->Attribute("HitPoints");
 		temp.hitSound =		brickType->Attribute("HitSound");
 		temp.breakScore=	std::stoi(brickType->Attribute("BreakScore"));
+		temp.hitPoints = brickType->Attribute("HitPoints")==std::string("Infinite")? 
+			10000:
+			std::stoi(brickType->Attribute("HitPoints"));
+		
+		
+		//std::cout << "\nHitpoints:" << temp.hitPoints;
+		
+		//this->brickTypes.push_back(temp);
+		this->brickMap.insert(
+			std::pair<BrickT, BrickType>(static_cast<BrickT>(temp.id), temp));
 
-		this->brickTypes.push_back(temp);
 
 	}
-
+	
 	std::cout << "\nFIN brick info\n";
 
 	XMLElement* brickOrg = brickTypes->NextSiblingElement("Bricks");

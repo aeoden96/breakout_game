@@ -9,19 +9,28 @@ using namespace tinyxml2;
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult);  }
 #endif
 
+enum BrickT { 
+	SOFT='S',
+	MEDUIM = 'M', 
+	HARD= 'H', 
+	INF = 'I',
+	UNDEF='U' };
+
+
 struct BrickType {
-	std::string id;
+	char id;
 	std::string texture;
-	std::string hitPoints;
+	unsigned int hitPoints;
 	std::string hitSound;
 	std::string breakSound;
-	int breakScore;
+	unsigned int breakScore;
 };
 
 class XML_Level
 {
 public:
-	std::vector<BrickType> brickTypes;
+	//std::vector<BrickType> brickTypes;
+	std::map<BrickT, BrickType> brickMap;
 	std::string brickAlignment;
 
 	XMLDocument* xmlDoc;
@@ -31,7 +40,6 @@ public:
 	int rowSpacing;
 	int columnSpacing;
 	std::string backgroundTexture;
-
 
 	void importDataForLevel(int level);
 	XML_Level(std::string location);

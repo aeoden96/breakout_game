@@ -3,7 +3,7 @@
 State::State(StateData* stateData)
 {
 
-	std::cout << "\n" << "State constr";
+	std::cout << "\n" << "State --- CONSTRUCTOR";
 	this->stateData = stateData;
 	this->window = stateData->window;
 	this->states = stateData->states;
@@ -18,7 +18,7 @@ State::State(StateData* stateData)
 
 State::~State()
 {
-	std::cout << "\n" << "State destr \n \n";
+	std::cout << "\n" << "State --- DESRUCTOR \n";
 
 }
 //Accessors

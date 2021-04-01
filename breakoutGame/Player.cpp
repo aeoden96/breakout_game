@@ -116,7 +116,7 @@ void Player::updateAnimation(const float& dt) {
 void Player::update(const float& dt)
 {
 	this->movementComponent->update(dt); //calculates velocity and MOVES the sprite
-
+	
 	this->updateAttack();
 
 	this->updateAnimation(dt);
