@@ -7,6 +7,8 @@
 #include "PauseMenu.h"
 #include "ScoreSystem.h"
 #include "CollisionSystem.h"
+#include "WinLoseMenu.h"
+
 
 class GameState : public State
 {
@@ -23,7 +25,10 @@ private:
 	CollisionSystem* collisionSystem;
 	Player* player;
 	Ball* ball;
+
 	PauseMenu* pmenu;
+	WinLoseMenu* wmenu;
+
 	XML_Level* level;
 	BrickMap* brickMap;
 	//Functions
@@ -33,7 +38,7 @@ private:
 	void initTextures();
 	void initBackground();
 	void initPlayers();
-	void initPauseMenu();
+	void initMenus();
 	void initXMLLevel();
 	void initBrickMap();
 	void initScoreSystem();
@@ -47,6 +52,7 @@ public:
 	//Functions
 	void updateCollisions(const float& dt);
 	void updatePauseMenuButtons();
+	void updateWinLoseMenuButtons();
 	void updateInput(const float& dt);
 	void updateGameState();
 	void updatePlayerInput(const float& dt);

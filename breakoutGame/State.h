@@ -2,7 +2,6 @@
 
 #include "libs.h"
 #include "GraphicsSettings.h"
-
 class Player;
 class GraphicsSettings;
 class State;
@@ -40,6 +39,9 @@ protected:
 	std::map<std::string, int> keybinds;
 	bool quit;
 	bool paused;
+	gameState currentState;
+
+
 	float keytime;
 	float keytimeMax;
 	float gridSize;

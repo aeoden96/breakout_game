@@ -25,6 +25,7 @@ Player::Player(float x, float y, sf::Texture& texture)
 	this->createMovementComponent(300.f, 15.f, 5.f);
 
 	this->sprite.setScale(PLAYER_SIZE_FACTOR, PLAYER_SIZE_FACTOR);
+	
 
 	//this->createAnimationComponent(textureSheet);
 	// 

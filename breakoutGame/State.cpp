@@ -10,6 +10,7 @@ State::State(StateData* stateData)
 	this->supportedKeys = stateData->supportedKeys;
 	this->quit = false;
 	this->paused = false;
+	this->currentState = PLAYING;
 	this->keytime = 0.f;
 	this->keytimeMax = 10.f;
 	this->gridSize = stateData->gridSize;
@@ -24,6 +25,7 @@ State::~State()
 //Accessors
 const bool& State::getQuit() const
 {
+	//return this->currentState;
 	return this->quit;
 }
 
@@ -42,15 +44,18 @@ const bool& State::getKeytime()
 void State::endState()
 {
 	this->quit = true;
+	this->currentState = QUIT;
 }
 
 void State::pauseState()
 {
+	this->currentState = PAUSED;
 	this->paused = true;
 }
 
 void State::unpauseState()
 {
+	this->currentState = PLAYING;
 	this->paused = false;
 }
 

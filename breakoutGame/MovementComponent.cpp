@@ -90,13 +90,19 @@ void MovementComponent::move(const float dir_x, const float dir_y, const float& 
 
 
 	//acceleraton
-	this->velocity.x += this->acceleration * dir_x;
+	this->velocity.x += this->acceleration * dir_x*2;
 
-	this->velocity.y += this->acceleration * dir_y;
+	this->velocity.y += this->acceleration * dir_y*2;
 
 }
 void MovementComponent::reflexion(const float& dt, bool horizontal)
 {
+	float rx = ((double)std::rand() / (RAND_MAX)) + 0.8f;
+	float ry = ((double)std::rand() / (RAND_MAX)) + 0.8f;
+	
+	this->velocity.x = this->velocity.x * rx;
+	this->velocity.y = this->velocity.y * ry;
+
 	
 	if (horizontal) {
 		diry = -diry;

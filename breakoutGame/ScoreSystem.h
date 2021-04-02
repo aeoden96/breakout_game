@@ -1,7 +1,7 @@
 #pragma once
 #include "XML_Level.h"
 
-enum gameState {PLAYING , LOST ,WON};
+
 class ScoreSystem
 {
 private:

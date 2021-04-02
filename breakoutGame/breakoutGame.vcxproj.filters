@@ -69,9 +69,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="EditorState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
@@ -111,6 +108,9 @@
     <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WinLoseMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -132,9 +132,6 @@
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="SettingsState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorState.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="PauseMenu.h">
@@ -180,6 +177,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CollisionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WinLoseMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

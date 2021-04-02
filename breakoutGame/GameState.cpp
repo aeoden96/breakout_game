@@ -70,7 +70,7 @@ void GameState::initBackground()
 			static_cast<float>(this->window->getSize().y)
 		)
 	);
-	if (!this->backgroundTexture.loadFromFile("Resources/Images/Backgrounds/background2.jpg"))
+	if (!this->backgroundTexture.loadFromFile(this->level->backgroundTexture))
 		throw "ERROR:MAINMENUSTATE:FAILED_TO_LOAD_BACKGROUND_TEXTURE";
 	this->background.setTexture(&this->backgroundTexture);
 
@@ -96,10 +96,13 @@ void GameState::initPlayers()
 
 }
 
-void GameState::initPauseMenu()
+void GameState::initMenus()
 {
 	this->pmenu = new PauseMenu(*this->window, this->font);
 	this->pmenu->addButton("QUIT", 930.f, "Quit");
+
+	this->wmenu = new WinLoseMenu(*this->window, this->font);
+	this->wmenu->addButton("QUIT", 930.f, "Quit");
 }
 
 void GameState::initXMLLevel()
@@ -144,7 +147,7 @@ GameState::GameState(StateData* stateData)
 	this->initFonts();
 	this->initTextures();
 	this->initBackground();
-	this->initPauseMenu();
+	this->initMenus();
 	this->initPlayers();
 	this->initScoreSystem();
 	this->initBrickMap();
@@ -172,6 +175,14 @@ void GameState::updatePauseMenuButtons()
 	}
 }
 
+void GameState::updateWinLoseMenuButtons()
+{
+	if (this->wmenu->isButtonPressed("QUIT"))
+	{
+		this->endState();
+	}
+}
+
 void GameState::updateCollisions(const float& dt) {
 	this->collisionSystem->update(dt);	
 }
@@ -183,7 +194,7 @@ void GameState::updateInput(const float& dt)
 		//this->endState();
 
 
-		if (!this->paused)
+		if (this->currentState == PLAYING)
 			this->pauseState();
 		else
 			this->unpauseState();
@@ -191,8 +202,15 @@ void GameState::updateInput(const float& dt)
 }
 
 void GameState::updateGameState() {
-	if (this->scoreSystem->gameState() == gameState::LOST)
-		this->endState();
+	if (this->scoreSystem->gameState() == LOST)
+	{
+		this->currentState = LOST;
+		this->wmenu->setFinishScreen(LOST);
+		//this->endState();
+
+		
+	}
+		
 }	
 
 void GameState::updatePlayerInput(const float& dt)
@@ -227,8 +245,8 @@ void GameState::update(const float& dt)
 	this->updateMousePositions();
 	this->updateKeytime(dt);
 	this->updateInput(dt);
-
-	if (!this->paused) //unpaused update
+	if(this->currentState == PLAYING)
+	//if (!this->paused) //unpaused update
 	{
 		this->updatePlayerInput(dt); //update keyboard player movement
 		this->updateCollisions(dt);
@@ -241,11 +259,15 @@ void GameState::update(const float& dt)
 		this->updateGameState();
 
 	}
-	else if (this->paused) //Paused update
+	//else if (this->paused) //Paused update
+	else if(this->currentState == PAUSED)
 	{
-
 		this->pmenu->update(this->mousePosWindow);
 		this->updatePauseMenuButtons();
+	}
+	else if (this->currentState == WON || this->currentState == LOST) {
+		this->wmenu->update(this->mousePosWindow);
+		this->updateWinLoseMenuButtons();
 
 	}
 
@@ -267,9 +289,14 @@ void GameState::render(sf::RenderTarget* target)
 
 	this->scoreSystem->render(*target);
 
-	if (this->paused)//Pause menu render
+	//if (this->paused)//Pause menu render
+	if(this->currentState == PAUSED)
 	{
 		this->pmenu->render(*target);
+	}
+	if (this->currentState == WON || this->currentState == LOST)
+	{
+		this->wmenu->render(*target);
 	}
 
 

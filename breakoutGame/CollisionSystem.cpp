@@ -51,25 +51,48 @@ void CollisionSystem::collision_wall_ball(const float& dt)
 
 void CollisionSystem::collision_brick_ball(const float& dt)
 {
-	int side = 0;
+	enum hitType {NONE,FROM_SIDE, FROM_TOP_OR_BOTTOM, NEAR_EDGE };
+	hitType hit = NONE;
+
 	for (size_t x = 0; x < this->brickMap->maxSize.x; x++)
 	{
 		for (size_t y = 0; y < brickMap->maxSize.y; y++)
 		{
-			if (ball->checkCollision(this->brickMap->returnBrick(x,y)->returnPosition()))
+			if (ball->checkCollision(this->brickMap->returnBrick(x, y)->returnPosition()))
 			{
+				sf::FloatRect brickPosition = this->brickMap->returnBrick(x, y)->returnPosition();
 				//this->brickMap->returnBrick(x, y)->hit();
 				this->brickMap->crackIt(x, y);
 				this->scoreSystem->addPoints(this->brickMap->returnBrick(x, y)->getBrickType());
-				side = 1;
+				//hit = FROM_TOP_OR_BOTTOM;
+
+				//HIT FROM BELOW
+				
+				if (ball->getPosition().x > brickPosition.left) {
+					hit = FROM_SIDE;
+				}
+				else if (ball->getPosition().x + ball->getOuterBounds().width < brickPosition.left + brickPosition.width){
+					hit = FROM_SIDE;
+				}
+				if (ball->getPosition().x > brickPosition.left &&
+					ball->getPosition().x + ball->getOuterBounds().width < brickPosition.left + brickPosition.width) {
+					hit = FROM_TOP_OR_BOTTOM;
+				}
+
+
+
+
 			}
 		}
 	}
 	
 	//COLLISION BALL-- BRICK
 
-	if (side == 1)
+	if (hit == FROM_TOP_OR_BOTTOM)
 		ball->hit(dt, true);
+	else if (hit == FROM_SIDE) {
+		ball->hit(dt, false);
+	}
 }
 
 void CollisionSystem::collision_ball_player(const float& dt)
