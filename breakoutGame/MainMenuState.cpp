@@ -133,19 +133,17 @@ void MainMenuState::updateButtons()
 	//New game
 	if (this->buttons["GAME_STATE"]->isPressed())
 	{
-		this->states->push(new GameState(this->stateData,1));
+		this->states->push(new GameState(this->stateData,1,3));
 	}
 	//Settings
 	
 	if (this->buttons["SETTINGS_STATE"]->isPressed())
 	{
 		this->states->push(new SettingsState(this->stateData));
-	}/*
-	//Editor state
-	if (this->buttons["EDITOR_STATE"]->isPressed())
-	{
-		this->states->push(new EditorState(this->stateData));
-	}*/
+	}
+	
+	
+
 
 	//Quit the game
 	if (this->buttons["EXIT_STATE"]->isPressed())

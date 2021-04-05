@@ -25,6 +25,7 @@
 #include "SFML/Audio.hpp"
 #include "SFML/Network.hpp"
 
+#define MAX_LEVEL 2
 
 enum class gameState { 
     PLAYING = 0, 

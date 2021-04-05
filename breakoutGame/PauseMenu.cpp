@@ -20,7 +20,7 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 	this->container.setSize(
 		sf::Vector2f(
 			static_cast<float>(window.getSize().x) / 4.f,
-			static_cast<float>(window.getSize().y) - 100.f
+			static_cast<float>(window.getSize().y)  /2.f
 		)
 	);
 	this->container.setFillColor(sf::Color(20, 20, 20, 200));

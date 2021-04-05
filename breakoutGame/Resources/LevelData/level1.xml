@@ -3,7 +3,10 @@
   ColumnCount="20"
   RowSpacing="3"
   ColumnSpacing="3"
-  BackgroundTexture="Resources/Images/Backgrounds/Board_01.jpg">
+  BackgroundTexture="Resources/Images/Backgrounds/Board_01.jpg"
+  PlayerTexture="Resources/Images/player.png"
+  BallTexture="Resources/Images/ball.png"
+  BrickTexture="Resources/Images/box_textures.png">
   <BrickTypes>
     <!-- Soft Brick -->
     <BrickType

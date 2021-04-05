@@ -13,6 +13,8 @@
 class GameState : public State
 {
 private:
+	int currentLife;
+	int level;
 
 	sf::Texture backgroundTexture;
 	sf::SoundBuffer buffer;
@@ -30,7 +32,7 @@ private:
 	WinLoseMenu* wmenu;
 	bool restartStateVar;
 
-	XML_Level* level;
+	XML_Level* levelData;
 	BrickMap* brickMap;
 	//Functions
 
@@ -40,13 +42,13 @@ private:
 	void initBackground();
 	void initPlayers();
 	void initMenus();
-	void initXMLLevel(int level);
+	void initXMLLevel();
 	void initBrickMap();
 	void initScoreSystem();
 	void initCollisionSystem();
 	void loadSound();
 public:
-	GameState(StateData* stateData,int level);
+	GameState(StateData* stateData,int level,int currentLife);
 	virtual ~GameState();
 
 

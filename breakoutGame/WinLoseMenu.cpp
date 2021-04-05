@@ -19,7 +19,7 @@ WinLoseMenu::WinLoseMenu(sf::RenderWindow& window, sf::Font& font)
 	this->container.setSize(
 		sf::Vector2f(
 			static_cast<float>(window.getSize().x) / 4.f,
-			static_cast<float>(window.getSize().y) - 100.f
+			static_cast<float>(window.getSize().y) / 2.f
 		)
 	);
 	this->container.setFillColor(sf::Color(20, 20, 20, 200));
@@ -40,7 +40,6 @@ WinLoseMenu::WinLoseMenu(sf::RenderWindow& window, sf::Font& font)
 
 WinLoseMenu::~WinLoseMenu()
 {
-	std::cout << "\nPauseMenu destr" << std::endl;
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != this->buttons.end(); ++it)
 	{
@@ -54,6 +53,7 @@ void WinLoseMenu::setFinishScreen(gameState won_or_lost) {
 
 	std::string finButtonText = won_or_lost == gameState::WON ? "Next level" : "Still try next level";
 	this->buttons["NEXT"]->setText(finButtonText);
+
 		
 }
 
@@ -81,8 +81,7 @@ void WinLoseMenu::pauseGraphics()
 */
 void WinLoseMenu::addButton(const std::string key, float y, const std::string text)
 {
-	//std::cout << "\nWinLoseMenu Addbutton" << std::endl;
-	float width = 250.f;
+	float width = 400.f;
 	float height = 50.f;
 	float x = this->container.getPosition().x + this->container.getSize().x / 2.f - width / 2.f;
 

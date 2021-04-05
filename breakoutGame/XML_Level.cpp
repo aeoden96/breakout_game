@@ -34,6 +34,15 @@ void XML_Level::importDataForLevel(int level)
 	this->backgroundTexture = 
 		((XMLElement*)pRoot)->Attribute("BackgroundTexture");
 
+	this->playerTexture =
+		((XMLElement*)pRoot)->Attribute("PlayerTexture");
+
+	this->ballTexture =
+		((XMLElement*)pRoot)->Attribute("BallTexture");
+
+	this->brickTexture =
+		((XMLElement*)pRoot)->Attribute("BrickTexture");
+
 
 	XMLElement* brickTypes = pRoot->FirstChildElement("BrickTypes");
 

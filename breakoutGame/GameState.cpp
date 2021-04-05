@@ -43,21 +43,17 @@ void GameState::initFonts()
 void GameState::initTextures()
 {
 
-	/*if (!this->textures["PLAYER_SHEET"].loadFromFile("Resources/Images/Sprites/Player/player_sheet.png"))
-	{
-		throw "ERROR:GAME_STATE:COULD_NOT_LOAD_PLAYER_TEXTURE";
-	}*/
-	if (!this->textures["PLAYER_TEXTURE"].loadFromFile("Resources/Images/player.png"))
+
+	if (!this->textures["PLAYER_TEXTURE"].loadFromFile(this->levelData->playerTexture))
 	{
 		throw "ERROR:GAME_STATE:COULD_NOT_LOAD_PLAYER_TEXTURE";
 	}
 
-	if (!this->textures["BALL_TEXTURE"].loadFromFile("Resources/Images/ball.png"))
+	if (!this->textures["BALL_TEXTURE"].loadFromFile(this->levelData->ballTexture))
 	{
 		throw "ERROR:GAME_STATE:COULD_NOT_LOAD_PLAYER_TEXTURE";
 	}
 
-	//std::cout << "\n\nGamestate::initTextures player tex\n";
 
 
 }
@@ -70,7 +66,7 @@ void GameState::initBackground()
 			static_cast<float>(this->window->getSize().y)
 		)
 	);
-	if (!this->backgroundTexture.loadFromFile(this->level->backgroundTexture))
+	if (!this->backgroundTexture.loadFromFile(this->levelData->backgroundTexture))
 		throw "ERROR:MAINMENUSTATE:FAILED_TO_LOAD_BACKGROUND_TEXTURE";
 	this->background.setTexture(&this->backgroundTexture);
 
@@ -99,17 +95,18 @@ void GameState::initPlayers()
 void GameState::initMenus()
 {
 	this->pmenu = new PauseMenu(*this->window, this->font);
-	this->pmenu->addButton("QUIT", 930.f, "Quit");
+	this->pmenu->addButton("QUIT", 460.f, "Quit");
 
 	this->wmenu = new WinLoseMenu(*this->window, this->font);
-	this->wmenu->addButton("NEXT", 830.f, "Try next level");
-	this->wmenu->addButton("QUIT", 930.f, "Quit");
+
+	this->wmenu->addButton("NEXT", 360.f, "Try next level");
+	this->wmenu->addButton("QUIT", 460.f, "Quit");
 }
 
-void GameState::initXMLLevel(int level)
+void GameState::initXMLLevel()
 {
-	this->level = new XML_Level();
-	this->level->importDataForLevel(level);
+	this->levelData = new XML_Level();
+	this->levelData->importDataForLevel(this->level);
 }
 
 void GameState::initBrickMap()
@@ -117,33 +114,33 @@ void GameState::initBrickMap()
 
 	this->brickMap = new BrickMap(
 		/*this->stateData->gridSize*/ 100, 10, 10,
-		"Resources/Images/box_textures.png",
-		this->level,
+		this->levelData->brickTexture,
+		this->levelData,
 		this->scoreSystem,
 		&buffer);
 }
 
 void GameState::initScoreSystem() {
-	this->scoreSystem = new ScoreSystem(level,font);
+	this->scoreSystem = new ScoreSystem(levelData,font, this->level,this->currentLife);
 	
 }
+
 void GameState::initCollisionSystem() {
 	this->collisionSystem =
 		new CollisionSystem(ball, player, brickMap,scoreSystem);
 
 }
+
 void GameState::loadSound() {
 	if (!buffer.loadFromFile("Resources/Sounds/break_sound1.wav"))
 		return;
 }
 //Const/destr
-GameState::GameState(StateData* stateData, int level)
-	:State(stateData)
+GameState::GameState(StateData* stateData, int level,int currentLife)
+	:State(stateData),level(level), currentLife(currentLife)
 {
 
-	this->restartStateVar = false;
-
-	this->initXMLLevel(level);
+	this->initXMLLevel();
 	this->loadSound();
 	this->initKeybinds();
 	this->initFonts();
@@ -162,10 +159,11 @@ GameState::~GameState()
 {
 
 
-	delete this->level;
+	delete this->levelData;
 	delete this->player;
 	delete this->ball;
 	delete this->pmenu;
+	delete this->wmenu;
 	delete this->brickMap;
 	delete this->scoreSystem;
 }
@@ -187,7 +185,8 @@ void GameState::updateWinLoseMenuButtons()
 
 	if (this->wmenu->isButtonPressed("NEXT"))
 	{
-		this->endState(gameState::RESTART);
+		if(this->level != MAX_LEVEL)
+			this->endState(gameState::RESTART);
 	}
 }
 
@@ -274,6 +273,11 @@ void GameState::update(const float& dt)
 		this->updatePauseMenuButtons();
 	}
 	else if (this->currentState == gameState::WON || this->currentState == gameState::LOST) {
+		if (this->currentState == gameState::LOST && this->currentLife >= 2) {
+			this->endState(gameState::RESTART);
+			return;
+		}
+		
 		this->wmenu->update(this->mousePosWindow);
 		this->updateWinLoseMenuButtons();
 
@@ -302,7 +306,10 @@ void GameState::render(sf::RenderTarget* target)
 	{
 		this->pmenu->render(*target);
 	}
-	if (this->currentState == gameState::WON || this->currentState == gameState::LOST)
+	else if (this->currentState == gameState::LOST && this->currentLife >= 2) {
+
+	}
+	else if (this->currentState == gameState::WON || this->currentState == gameState::LOST)
 	{
 		this->wmenu->render(*target);
 	}
@@ -312,5 +319,8 @@ void GameState::render(sf::RenderTarget* target)
 
 State* GameState::getRestart() const
 {
-	return new GameState(this->stateData, 2);
+	if(this->currentLife >= 2)
+		return new GameState(this->stateData, this->level,this->currentLife-1);
+	else
+		return new GameState(this->stateData, this->level+1, 3);
 }

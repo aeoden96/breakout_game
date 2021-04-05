@@ -35,6 +35,9 @@ public:
 	int rowSpacing;
 	int columnSpacing;
 	std::string backgroundTexture;
+	std::string playerTexture;
+	std::string ballTexture;
+	std::string brickTexture;
 
 	void importDataForLevel(int level);
 	XML_Level();
