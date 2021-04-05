@@ -3,14 +3,13 @@
 State::State(StateData* stateData)
 {
 
-	std::cout << "\n" << "State --- CONSTRUCTOR";
 	this->stateData = stateData;
 	this->window = stateData->window;
 	this->states = stateData->states;
 	this->supportedKeys = stateData->supportedKeys;
 	this->quit = false;
 	this->paused = false;
-	this->currentState = PLAYING;
+	this->currentState = gameState::PLAYING;
 	this->keytime = 0.f;
 	this->keytimeMax = 10.f;
 	this->gridSize = stateData->gridSize;
@@ -19,17 +18,21 @@ State::State(StateData* stateData)
 
 State::~State()
 {
-	std::cout << "\n" << "State --- DESRUCTOR \n";
 
 }
-//Accessors
-const bool& State::getQuit() const
+
+gameState State::getQuit() const
 {
-	//return this->currentState;
-	return this->quit;
+	return this->currentState;
+	//return this->quit;
 }
 
-const bool& State::getKeytime()
+State* State::getRestart() const
+{
+	return nullptr;
+}
+
+const bool State::getKeytime()
 {
 	if (this->keytime >= this->keytimeMax)
 	{
@@ -41,21 +44,22 @@ const bool& State::getKeytime()
 
 
 //Functions
-void State::endState()
+void State::endState(gameState state)
 {
-	this->quit = true;
-	this->currentState = QUIT;
+	//this->quit = true;
+	this->currentState = state;
 }
+
 
 void State::pauseState()
 {
-	this->currentState = PAUSED;
+	this->currentState = gameState::PAUSED;
 	this->paused = true;
 }
 
 void State::unpauseState()
 {
-	this->currentState = PLAYING;
+	this->currentState = gameState::PLAYING;
 	this->paused = false;
 }
 

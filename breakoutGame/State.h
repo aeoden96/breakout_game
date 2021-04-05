@@ -63,9 +63,11 @@ public:
 
 
 	//Accessor
-	const bool& getQuit() const;
-	const bool& getKeytime();/*needs to be defined in child classes of State*/
-	void endState();
+	gameState getQuit() const;
+	virtual State* getRestart() const;
+	const bool getKeytime();/*needs to be defined in child classes of State*/
+	void endState(gameState state);
+
 	void pauseState();
 	void unpauseState();
 

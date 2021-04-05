@@ -102,13 +102,14 @@ void GameState::initMenus()
 	this->pmenu->addButton("QUIT", 930.f, "Quit");
 
 	this->wmenu = new WinLoseMenu(*this->window, this->font);
+	this->wmenu->addButton("NEXT", 830.f, "Try next level");
 	this->wmenu->addButton("QUIT", 930.f, "Quit");
 }
 
-void GameState::initXMLLevel()
+void GameState::initXMLLevel(int level)
 {
-	this->level = new XML_Level("Resources/LevelData/level1.xml");
-	this->level->importDataForLevel(0);
+	this->level = new XML_Level();
+	this->level->importDataForLevel(level);
 }
 
 void GameState::initBrickMap()
@@ -136,12 +137,13 @@ void GameState::loadSound() {
 		return;
 }
 //Const/destr
-GameState::GameState(StateData* stateData)
+GameState::GameState(StateData* stateData, int level)
 	:State(stateData)
 {
-	std::cout << "\nGameState --- CONSTRUCTOR \n";
 
-	this->initXMLLevel();
+	this->restartStateVar = false;
+
+	this->initXMLLevel(level);
 	this->loadSound();
 	this->initKeybinds();
 	this->initFonts();
@@ -155,9 +157,10 @@ GameState::GameState(StateData* stateData)
 
 }
 
+
 GameState::~GameState()
 {
-	std::cout << "\nGameState --- DESTRUCTOR";
+
 
 	delete this->level;
 	delete this->player;
@@ -171,7 +174,7 @@ void GameState::updatePauseMenuButtons()
 {
 	if (this->pmenu->isButtonPressed("QUIT"))
 	{
-		this->endState();
+		this->endState(gameState::QUIT);
 	}
 }
 
@@ -179,7 +182,12 @@ void GameState::updateWinLoseMenuButtons()
 {
 	if (this->wmenu->isButtonPressed("QUIT"))
 	{
-		this->endState();
+		this->endState(gameState::QUIT);
+	}
+
+	if (this->wmenu->isButtonPressed("NEXT"))
+	{
+		this->endState(gameState::RESTART);
 	}
 }
 
@@ -194,7 +202,7 @@ void GameState::updateInput(const float& dt)
 		//this->endState();
 
 
-		if (this->currentState == PLAYING)
+		if (this->currentState == gameState::PLAYING)
 			this->pauseState();
 		else
 			this->unpauseState();
@@ -202,10 +210,10 @@ void GameState::updateInput(const float& dt)
 }
 
 void GameState::updateGameState() {
-	if (this->scoreSystem->gameState() == LOST)
+	if (this->scoreSystem->gameState() == gameState::LOST)
 	{
-		this->currentState = LOST;
-		this->wmenu->setFinishScreen(LOST);
+		this->currentState = gameState::LOST;
+		this->wmenu->setFinishScreen(gameState::LOST);
 		//this->endState();
 
 		
@@ -245,7 +253,7 @@ void GameState::update(const float& dt)
 	this->updateMousePositions();
 	this->updateKeytime(dt);
 	this->updateInput(dt);
-	if(this->currentState == PLAYING)
+	if(this->currentState == gameState::PLAYING)
 	//if (!this->paused) //unpaused update
 	{
 		this->updatePlayerInput(dt); //update keyboard player movement
@@ -260,12 +268,12 @@ void GameState::update(const float& dt)
 
 	}
 	//else if (this->paused) //Paused update
-	else if(this->currentState == PAUSED)
+	else if(this->currentState == gameState::PAUSED)
 	{
 		this->pmenu->update(this->mousePosWindow);
 		this->updatePauseMenuButtons();
 	}
-	else if (this->currentState == WON || this->currentState == LOST) {
+	else if (this->currentState == gameState::WON || this->currentState == gameState::LOST) {
 		this->wmenu->update(this->mousePosWindow);
 		this->updateWinLoseMenuButtons();
 
@@ -290,14 +298,19 @@ void GameState::render(sf::RenderTarget* target)
 	this->scoreSystem->render(*target);
 
 	//if (this->paused)//Pause menu render
-	if(this->currentState == PAUSED)
+	if(this->currentState == gameState::PAUSED)
 	{
 		this->pmenu->render(*target);
 	}
-	if (this->currentState == WON || this->currentState == LOST)
+	if (this->currentState == gameState::WON || this->currentState == gameState::LOST)
 	{
 		this->wmenu->render(*target);
 	}
 
 
+}
+
+State* GameState::getRestart() const
+{
+	return new GameState(this->stateData, 2);
 }

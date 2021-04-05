@@ -57,11 +57,11 @@ void MainMenuState::initKeybinds()
 	}
 	ifs.close();
 
-	std::cout << "\nMainMenuState:Keybinds map: \n";
+	/*std::cout << "\nMainMenuState:Keybinds map: \n";
 	for (auto i : this->keybinds)
 	{
 		std::cout << "   > " << i.first << " " << i.second << "\n";
-	}
+	}*/
 
 
 }
@@ -91,7 +91,7 @@ void MainMenuState::initButtons()
 MainMenuState::MainMenuState(StateData* stateData)
 	:State(stateData)
 {
-	std::cout << "\n" << "MainMenuState --- CONSTRUCTOR : ";
+
 	this->initVariables(); //no vars
 	this->initBackground();
 	this->initFonts();
@@ -101,7 +101,7 @@ MainMenuState::MainMenuState(StateData* stateData)
 
 MainMenuState::~MainMenuState()
 {
-	std::cout << "\n" << "MainMenuState --- DESTRUCTOR";
+
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != this->buttons.end(); ++it)
 	{
@@ -133,7 +133,7 @@ void MainMenuState::updateButtons()
 	//New game
 	if (this->buttons["GAME_STATE"]->isPressed())
 	{
-		this->states->push(new GameState(this->stateData));
+		this->states->push(new GameState(this->stateData,1));
 	}
 	//Settings
 	
@@ -150,7 +150,7 @@ void MainMenuState::updateButtons()
 	//Quit the game
 	if (this->buttons["EXIT_STATE"]->isPressed())
 	{
-		this->endState();
+		this->endState(gameState::QUIT);
 	}
 }
 

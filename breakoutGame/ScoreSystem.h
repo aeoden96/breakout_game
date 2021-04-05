@@ -14,7 +14,7 @@ private:
 
 	unsigned int score = 0;
 public:
-	void addPoints(BrickT brickType);
+	void addPoints(char brickType);
 	gameState gameState();
 	int getScore();
 	void ballLost();

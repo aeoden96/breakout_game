@@ -97,8 +97,8 @@ void MovementComponent::move(const float dir_x, const float dir_y, const float& 
 }
 void MovementComponent::reflexion(const float& dt, bool horizontal)
 {
-	float rx = ((double)std::rand() / (RAND_MAX)) + 0.8f;
-	float ry = ((double)std::rand() / (RAND_MAX)) + 0.8f;
+	float rx = ((float)std::rand() / (RAND_MAX)) + 0.8f;
+	float ry = ((float)std::rand() / (RAND_MAX)) + 0.8f;
 	
 	this->velocity.x = this->velocity.x * rx;
 	this->velocity.y = this->velocity.y * ry;

@@ -17,7 +17,7 @@ protected:
 	bool collision;
 	bool isHit;
 	std::string id;
-	BrickT brickType;
+	char brickType;
 	int hitsToCrack;
 
 public:
@@ -30,7 +30,7 @@ public:
 		const sf::IntRect& tex_rect,
 		bool collision = false,
 		short type = TileTypes::DEFAULT,
-		BrickT id= UNDEF,
+		char id= brickTypeClass::UNDEF,
 		int hitsToCrack=1);
 	void crackIt(int posX, int posY, int sizeX, int sizeY);
 	Brick();
@@ -39,7 +39,7 @@ public:
 	sf::FloatRect returnPosition();
 	void hit();
 	const std::string getAsString() const;
-	BrickT getBrickType();
+	char getBrickType();
 	int getCrackNum();
 	void update();
 	void render(sf::RenderTarget& target);

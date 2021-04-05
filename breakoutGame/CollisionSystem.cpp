@@ -51,12 +51,14 @@ void CollisionSystem::collision_wall_ball(const float& dt)
 
 void CollisionSystem::collision_brick_ball(const float& dt)
 {
-	enum hitType {NONE,FROM_SIDE, FROM_TOP_OR_BOTTOM, NEAR_EDGE };
-	hitType hit = NONE;
+	enum class hitType {NONE,FROM_SIDE, FROM_TOP_OR_BOTTOM, NEAR_EDGE };
+	
+	
+	hitType hit = hitType::NONE;
 
-	for (size_t x = 0; x < this->brickMap->maxSize.x; x++)
+	for (unsigned int x = 0; x < this->brickMap->maxSize.x; x++)
 	{
-		for (size_t y = 0; y < brickMap->maxSize.y; y++)
+		for (unsigned int y = 0; y < brickMap->maxSize.y; y++)
 		{
 			if (ball->checkCollision(this->brickMap->returnBrick(x, y)->returnPosition()))
 			{
@@ -69,14 +71,14 @@ void CollisionSystem::collision_brick_ball(const float& dt)
 				//HIT FROM BELOW
 				
 				if (ball->getPosition().x > brickPosition.left) {
-					hit = FROM_SIDE;
+					hit = hitType::FROM_SIDE;
 				}
 				else if (ball->getPosition().x + ball->getOuterBounds().width < brickPosition.left + brickPosition.width){
-					hit = FROM_SIDE;
+					hit = hitType::FROM_SIDE;
 				}
 				if (ball->getPosition().x > brickPosition.left &&
 					ball->getPosition().x + ball->getOuterBounds().width < brickPosition.left + brickPosition.width) {
-					hit = FROM_TOP_OR_BOTTOM;
+					hit = hitType::FROM_TOP_OR_BOTTOM;
 				}
 
 
@@ -88,9 +90,9 @@ void CollisionSystem::collision_brick_ball(const float& dt)
 	
 	//COLLISION BALL-- BRICK
 
-	if (hit == FROM_TOP_OR_BOTTOM)
+	if (hit == hitType::FROM_TOP_OR_BOTTOM)
 		ball->hit(dt, true);
-	else if (hit == FROM_SIDE) {
+	else if (hit == hitType::FROM_SIDE) {
 		ball->hit(dt, false);
 	}
 }
@@ -100,7 +102,7 @@ void CollisionSystem::collision_ball_player(const float& dt)
 	//COLLISION BALL--PLAYER
 
 	if (player->checkCollision(ball)) {
-		int ballCenter = ball->getOuterBounds().width / 2 + ball->getPosition().x;
+		int ballCenter =static_cast<int>( ball->getOuterBounds().width / 2 + ball->getPosition().x );
 
 		if (ballCenter < player->getPosition().x ||
 			ballCenter> player->getPosition().x + player->getOuterBounds().width) {

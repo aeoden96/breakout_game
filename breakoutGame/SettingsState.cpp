@@ -84,7 +84,8 @@ void SettingsState::initGui()
 	{
 		modes_str.push_back(std::to_string(i.width) + "x" + std::to_string(i.height));
 	}
-	this->dropDownLists["RESOLUTION"] = new gui::DropDownList(400, 450, 200, 50, font, modes_str.data(), modes_str.size());
+	this->dropDownLists["RESOLUTION"] = 
+		new gui::DropDownList(400, 450, 200, 50, font, modes_str.data(), static_cast<unsigned int>(modes_str.size()));
 }
 
 void SettingsState::initText()
@@ -158,7 +159,7 @@ void SettingsState::updateGui(const float& dt)
 	//Quit the game
 	if (this->buttons["BACK"]->isPressed())
 	{
-		this->endState();
+		this->endState(gameState::QUIT);
 	}
 	//apply selected settings
 	if (this->buttons["APPLY"]->isPressed())

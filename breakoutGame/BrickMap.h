@@ -28,7 +28,7 @@ private:
 
 public:
 	sf::Vector2u maxSize;
-
+	
 	Brick* returnBrick(int i, int j);
 	void crackIt(int i, int j);
 

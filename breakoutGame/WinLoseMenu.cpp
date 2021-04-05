@@ -5,7 +5,6 @@
 WinLoseMenu::WinLoseMenu(sf::RenderWindow& window, sf::Font& font)
 	:font(font)
 {
-	std::cout << "\nPauseMenu constr" << std::endl;
 	//Init background
 	this->background.setSize(
 		sf::Vector2f(
@@ -50,8 +49,11 @@ WinLoseMenu::~WinLoseMenu()
 }
 
 void WinLoseMenu::setFinishScreen(gameState won_or_lost) {
-	std::string finText = won_or_lost == WON ? "YOU WON" : "YOU LOST";
+	std::string finText = won_or_lost == gameState::WON ? "YOU WON" : "YOU LOST";
 	this->menuText.setString(finText);
+
+	std::string finButtonText = won_or_lost == gameState::WON ? "Next level" : "Still try next level";
+	this->buttons["NEXT"]->setText(finButtonText);
 		
 }
 

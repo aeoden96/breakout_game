@@ -1,7 +1,7 @@
 #include "ScoreSystem.h"
 #include"libs.h"
 
-void ScoreSystem::addPoints(BrickT brickType)
+void ScoreSystem::addPoints(char brickType)
 {
 	score += level->brickMap.at(brickType).breakScore;
 
@@ -42,7 +42,7 @@ ScoreSystem::ScoreSystem(XML_Level* level,sf::Font& font):
 	score = 0;
 	//std::cout << "\n" << "score " + std::to_string(score);
 
-	currentState = PLAYING;
+	currentState = gameState::PLAYING;
 }
 
 

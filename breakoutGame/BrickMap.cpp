@@ -24,34 +24,17 @@ Brick* BrickMap::returnBrick(int i,int j) {
 	return this->map[i][j][0];
 }
 
+
 void BrickMap::crackIt(int i, int j)
 {
 	int crackNum = this->map[i][j][0]->getCrackNum();
-	BrickT type = this->map[i][j][0]->getBrickType();
+	char type = this->map[i][j][0]->getBrickType();
 
 	crackNum = this->levelInfo->brickMap.at(type).hitPoints - crackNum;
 
-	
-	int brickIndex = 0;
+	int brickIndex = brickTypeClass::getIndex(type);
 
-	switch (type) {
-	case SOFT:
-		brickIndex = 0;
-		break;
-	case MEDUIM:
-		brickIndex = 1;
-		break;
-	case HARD:
-		brickIndex = 2;
-		break;
-	case INF:
-		brickIndex = 3;
-		break;
-
-	}
 	this->map[i][j][0]->crackIt(400 * brickIndex, 200*(crackNum+1), this->gridSizeU, (int)(this->gridSizeU * 0.5f));
-
-	std::cout << "\ncrackIt " << brickIndex << " " << crackNum ;
 
 	sound.play();
 	
@@ -99,7 +82,6 @@ BrickMap::BrickMap(float gridSize,
 	sf::SoundBuffer* sb)
 {
 	this->scoreSystem = scoreSystem;
-	std::cout << "\nBRICKMAP --- CONSTRUCTOR";
 	this->levelInfo = levelInfo;
 	this->textureFile = textureFile;
 	std::string brickAlignment =this->levelInfo->brickAlignment;
@@ -116,9 +98,6 @@ BrickMap::BrickMap(float gridSize,
 	this->maxSize.y = this->levelInfo->rowCount;
 	this->layers = 1;
 
-
-
-	/*instead of pushback, we are using resize to set values in the map at once*/
 	this->map.resize(this->maxSize.x, std::vector<  std::vector<Brick*>>());
 
 
@@ -136,19 +115,11 @@ BrickMap::BrickMap(float gridSize,
 			}
 		}
 	}
-	
-
-	std::map<int,char> brickTypeMap;
-
-	brickTypeMap[0] = 'S';
-	brickTypeMap[1] = 'M';
-	brickTypeMap[2] = 'H';
-	brickTypeMap[3] = 'I';
-	brickTypeMap[4] = ' ';
 
 
-	int i = 0;
-	int brickType = 0;
+	int brickIndex;
+	char brickType;
+
 	int red = 0;
 	int stupac = 0;
 	//std::cout << "\nSTART";
@@ -156,66 +127,53 @@ BrickMap::BrickMap(float gridSize,
 	//std::cout << "FIN\n";
 
 	for (char& c : brickAlignment) {
-		switch (c) {
-		case 'S':
-			stupac++;
-			brickType = 0;
-			break;
-		case 'M':
-			stupac++;
-			brickType = 1;
-			break;
-		case 'H':
-			stupac++;
-			brickType = 2;
-			break;
-		case 'I':
-			stupac++;
-			brickType = 3;
-			break;
-		case ' ':
-			
-			
-			break;
-		case '\n':
 
+		if (c != ' ' && c != '\n') {
+			stupac++;
+			brickType = c;
+			brickIndex = brickTypeClass::getIndex(brickType);
+		}
+		else if(c == '\n') {
+			if (stupac == 0 && red == 0)
+				continue;
 			red++;
 			stupac = 0;
-			
-			
-			break;
 		}
-		
-		//if(c!=' ' && c!= '\n')
-		//	std::cout << "\n" << stupac-1 << " "<< red << " "  << c;
+		else {
+			continue;
+		}
 
 		this->gridSizeU = 400;
-
 		int screenW = 1920;
 		int screenH = 1080;
-
 		int offset = 3;
 
-		if (c != ' ' && c != '\n')
-			this->map[(stupac-1)][red][0] = new Brick(
-				(stupac-1), red,
-				/*screenW / (maxSize.x+3)*/ 92.85f,
-				screenH / (20), 
-				this->tileTextureSheet,
-				sf::IntRect(400* brickType, 0, this->gridSizeU, this->gridSizeU*0.5),
-				true,
-				0, 
-				static_cast<BrickT>(brickTypeMap[brickType]),
-				levelInfo->brickMap.at(static_cast<BrickT>(brickTypeMap[brickType])).hitPoints
+		if (c != ' ' && c != '\n') {
+			stupac--;
+
+
+			this->map[stupac][red][0] =
+				new Brick(
+					stupac,
+					red,
+					/*screenW / (maxSize.x+3)*/
+					92.85f,
+					(screenH / (20.f) ),
+					this->tileTextureSheet,
+					sf::IntRect(
+						400 * brickIndex,
+						0,
+						this->gridSizeU,
+						static_cast<int>(this->gridSizeU * 0.5f) ),
+					true,
+					0,
+					brickType,
+					levelInfo->brickMap.at(brickType).hitPoints
 				);
+			stupac++;
+		}
 
-
-		i++;
 	}
-
-	
-	
-	
 }
 
 BrickMap::~BrickMap()
@@ -249,7 +207,13 @@ void BrickMap::render(sf::RenderTarget& target)
 	}
 }
 
-void BrickMap::addTile(const unsigned x, const unsigned y, const unsigned z, const sf::IntRect& tex_rect, const bool& collision, const bool& type)
+void BrickMap::addTile(
+	const unsigned x,
+	const unsigned y,
+	const unsigned z,
+	const sf::IntRect& tex_rect,
+	const bool& collision, 
+	const bool& type)
 {
 	/*Take three indicies from mouse pos in the grid and add tile to that pos
 	if internal tilemap array allows it*/

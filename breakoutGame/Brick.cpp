@@ -2,8 +2,16 @@
 
 
 
-Brick::Brick(unsigned grid_x, unsigned grid_y, float gridSizeF_x, float gridSizeF_y, const sf::Texture& texture, const sf::IntRect& tex_rect,
-	bool collision, short type, BrickT id,int hitsToCrack)
+Brick::Brick(unsigned grid_x,
+	unsigned grid_y, 
+	float gridSizeF_x, 
+	float gridSizeF_y, 
+	const sf::Texture& texture, 
+	const sf::IntRect& tex_rect,
+	bool collision, 
+	short type, 
+	char id,
+	int hitsToCrack)
 {
 	//this->shape.setScale(0.25f,0.25f);
 	this->shape.setSize(sf::Vector2f(gridSizeF_x, gridSizeF_y));
@@ -34,7 +42,7 @@ Brick::Brick()
 	this->collision = false;
 	this->type = 0;
 	this->isHit = false;
-	this->brickType = BrickT::UNDEF;
+	this->brickType = brickTypeClass::UNDEF;
 
 	
 }
@@ -79,7 +87,7 @@ const std::string Brick::getAsString() const
 
 }
 
-BrickT Brick::getBrickType()
+char Brick::getBrickType()
 {
 	return this->brickType;
 }

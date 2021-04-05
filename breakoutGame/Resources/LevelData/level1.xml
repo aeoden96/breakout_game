@@ -44,7 +44,9 @@
 	  
 	</BrickType> 
     </BrickTypes>
-  <Bricks>H H H H H H H H H H H H H H H H H H H H
+  <Bricks>
+  H H H H H H H H H H H H H H H H H H H H
   M M I I M M M M M M M M M M M M I I M M
-  S S S S S S S S S S S S S S S S S S S S</Bricks>
+  S M M M M S S S S I I S S S H H H S S S
+  </Bricks>
 </Level>

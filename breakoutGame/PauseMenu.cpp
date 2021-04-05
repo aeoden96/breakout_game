@@ -6,7 +6,6 @@
 PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 	:font(font)
 {
-	std::cout << "\nPauseMenu constr" << std::endl;
 	//Init background
 	this->background.setSize(
 		sf::Vector2f(
@@ -43,7 +42,6 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 
 PauseMenu::~PauseMenu()
 {
-	std::cout << "\nPauseMenu destr" << std::endl;
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != this->buttons.end(); ++it)
 	{
@@ -74,7 +72,6 @@ void PauseMenu::pauseGraphics()
 */
 void PauseMenu::addButton(const std::string key, float y, const std::string text)
 {
-	std::cout << "\nPauseMenu Addbutton" << std::endl;
 	float width = 250.f;
 	float height = 50.f;
 	float x = this->container.getPosition().x + this->container.getSize().x / 2.f - width / 2.f;

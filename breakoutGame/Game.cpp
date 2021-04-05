@@ -76,7 +76,6 @@ void Game::initStateData()
 
 void Game::initStates()
 {
-	std::cout << "\n" << "Game --- init states";
 	this->states.push(new MainMenuState(&this->stateData));
 	//this->states.push(new GameState(this->window,&this->supportedKeys));
 }
@@ -86,7 +85,6 @@ void Game::initStates()
 //Constructors
 Game::Game()
 {
-	std::cout << "\n" << "Game --- constr \n";
 	this->initVariables();
 	this->initGraphicsSettings();
 	this->initWindow();
@@ -99,7 +97,6 @@ Game::Game()
 //Destructors
 Game::~Game()
 {
-	std::cout << "\n" << "Game --- destr";
 	delete this->window;
 	while (!this->states.empty())
 	{
@@ -114,7 +111,7 @@ Game::~Game()
 
 void Game::endApplication()
 {
-	std::cout << "\nEnding app function (blank)";
+	std::cout << "\nEnding app...\n\n";
 }
 
 void Game::updateDt()
@@ -134,14 +131,26 @@ void Game::update()
 		//update the top state
 		this->states.top()->update(this->dt);
 
-		if (this->states.top()->getQuit())
-		{
 
-			this->states.top()->endState();
+		if (this->states.top()->getQuit() == gameState::QUIT || this->states.top()->getQuit() == gameState::RESTART)
+		{
+			if (this->states.top()->getQuit() == gameState::RESTART) {
+				State* requestedRestartedState = this->states.top()->getRestart();
+				this->states.top()->endState(gameState::RESTART);
+				delete this->states.top();
+				this->states.pop();
+
+				this->states.push(requestedRestartedState);
+				return;
+
+			}
+			this->states.top()->endState(gameState::QUIT);
 			//delete state the top pointer points to
 			delete this->states.top();
+
 			this->states.pop();
 		}
+
 	}
 
 

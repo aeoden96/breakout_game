@@ -28,6 +28,7 @@ private:
 
 	PauseMenu* pmenu;
 	WinLoseMenu* wmenu;
+	bool restartStateVar;
 
 	XML_Level* level;
 	BrickMap* brickMap;
@@ -39,13 +40,13 @@ private:
 	void initBackground();
 	void initPlayers();
 	void initMenus();
-	void initXMLLevel();
+	void initXMLLevel(int level);
 	void initBrickMap();
 	void initScoreSystem();
 	void initCollisionSystem();
 	void loadSound();
 public:
-	GameState(StateData* stateData);
+	GameState(StateData* stateData,int level);
 	virtual ~GameState();
 
 
@@ -59,4 +60,5 @@ public:
 	void updateBallPosition(const float& dt);
 	void update(const float& dt);
 	void render(sf::RenderTarget* target = NULL);
+	State* getRestart() const;
 };
