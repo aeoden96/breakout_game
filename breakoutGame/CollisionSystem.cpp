@@ -4,11 +4,16 @@ CollisionSystem::CollisionSystem(
 	Ball* ball,
 	Player* player,
 	BrickMap* brickMap, 
-	ScoreSystem* scoreSystem) :
+	ScoreSystem* scoreSystem,
+	int screenW,
+	int screenH) :
 	ball(ball), 
 	player(player), 
 	brickMap(brickMap),
-	scoreSystem(scoreSystem){}
+	scoreSystem(scoreSystem),
+	screenW(screenW),
+	screenH(screenH)
+{}
 
 CollisionSystem::~CollisionSystem()
 {
@@ -22,8 +27,8 @@ void CollisionSystem::collision_wall_player(const float& dt)
 		player->stopVelocity('x');
 	}
 
-	else if (player->getPosition().x + player->getOuterBounds().width > 1920) {
-		player->setPosition(1920 - player->getOuterBounds().width, player->getPosition().y);
+	else if (player->getPosition().x + player->getOuterBounds().width > screenW) {
+		player->setPosition(screenW - player->getOuterBounds().width, player->getPosition().y);
 	}
 
 }
@@ -32,8 +37,10 @@ void CollisionSystem::collision_wall_ball(const float& dt)
 {
 	//COLLISION BALL--WALLS 
 
+	
+
 	if (ball->getPosition().x < 0 ||
-		ball->getPosition().x > 1920 - 50) {
+		ball->getPosition().x > screenW - this->ball->getOuterBounds().width ){
 		ball->hit(dt, false);
 	}
 
@@ -43,7 +50,7 @@ void CollisionSystem::collision_wall_ball(const float& dt)
 
 	//END
 
-	if (ball->getPosition().y > 1080) {
+	if (ball->getPosition().y > screenH) {
 		//this->endState();
 		this->scoreSystem->ballLost();
 	}

@@ -10,12 +10,14 @@ class CollisionSystem
 	Player* player;
 	BrickMap* brickMap;
 	ScoreSystem* scoreSystem;
+	int screenW, screenH;
 public:
 	CollisionSystem(
 		Ball* ball,
 		Player* player,
 		BrickMap* brickMap,
-		ScoreSystem* scoreSystem);
+		ScoreSystem* scoreSystem,
+		int screenW,int screenH);
 	~CollisionSystem();
 	void collision_wall_player(const float& dt);
 	void collision_wall_ball(const float& dt);

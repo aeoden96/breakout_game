@@ -24,62 +24,32 @@ Brick* BrickMap::returnBrick(int i,int j) {
 	return this->map[i][j][0];
 }
 
-
 void BrickMap::crackIt(int i, int j)
 {
+	//number of hits still required
 	int crackNum = this->map[i][j][0]->getCrackNum();
+
 	char type = this->map[i][j][0]->getBrickType();
 
 	crackNum = this->levelInfo->brickMap.at(type).hitPoints - crackNum;
 
 	int brickIndex = brickTypeClass::getIndex(type);
 
+	bool isCracked = crackNum == 1;
+
 	this->map[i][j][0]->crackIt(400 * brickIndex, 200*(crackNum+1), this->gridSizeU, (int)(this->gridSizeU * 0.5f));
 
-	sound.play();
+
+	this->playSound(isCracked, type);
 	
 }
 
-BrickMap::BrickMap(float gridSize, unsigned width, unsigned height, std::string textureFile)
-{
-	
-	std::cout << "\n" << "TileMap KONSTR ";
-	this->textureFile = textureFile;
-	this->gridSizeF = gridSize;
-	this->gridSizeU = static_cast<unsigned>(this->gridSizeF);
-	this->maxSize.x = width;
-	this->maxSize.y = height;
-	this->layers = 1;
-
-	/*instead of pushback, we are using resize to set values in the map at once*/
-	this->map.resize(this->maxSize.x, std::vector<  std::vector<Brick*>>());
-
-	for (size_t x = 0; x < this->maxSize.x; x++)
-	{
-		for (size_t y = 0; y < maxSize.y; y++)
-		{
-			this->map[x].resize(this->maxSize.y, std::vector<Brick*>());
-
-			for (size_t z = 0; z < this->layers; z++)
-			{
-				this->map[x][y].resize(this->layers, NULL);
-			}
-		}
-	}
-
-	if (!this->tileTextureSheet.loadFromFile(textureFile))
-		std::cout << "ERROR:TILEMAP:FAILED_TO_LOAD_TILE_TEXTURE_SHEET::FILENAME:" << textureFile << "\n";
-
-
-	
-}
 
 BrickMap::BrickMap(float gridSize,
-	unsigned width, unsigned height,
+	unsigned screen_width, unsigned screen_height,
 	std::string textureFile, 
 	XML_Level* levelInfo,
-	ScoreSystem* scoreSystem,
-	sf::SoundBuffer* sb)
+	ScoreSystem* scoreSystem)
 {
 	this->scoreSystem = scoreSystem;
 	this->levelInfo = levelInfo;
@@ -90,8 +60,16 @@ BrickMap::BrickMap(float gridSize,
 		std::cout << "ERROR:TILEMAP:FAILED_TO_LOAD_TILE_TEXTURE_SHEET::FILENAME:" << textureFile << "\n";
 
 	enum BRICK_TYPE { M,H,I,S,EMPTY};
+	for (std::pair<char, BrickType> b : this->levelInfo->brickMap) {
+		
+		if (!this->breakSounds[b.first].openFromFile(b.second.breakSound))
+			return; // error
 
-	this->sound.setBuffer(*sb);
+		if (!this->hitSounds[b.first].openFromFile(b.second.hitSound))
+			return; // error
+
+	}
+	//this->sound.setBuffer(*sb);
 	this->gridSizeF = gridSize;
 	this->gridSizeU = static_cast<unsigned>(this->gridSizeF);
 	this->maxSize.x = this->levelInfo->columnCount;
@@ -99,9 +77,6 @@ BrickMap::BrickMap(float gridSize,
 	this->layers = 1;
 
 	this->map.resize(this->maxSize.x, std::vector<  std::vector<Brick*>>());
-
-
-
 
 	for (size_t x = 0; x < this->maxSize.x; x++)
 	{
@@ -119,12 +94,9 @@ BrickMap::BrickMap(float gridSize,
 
 	int brickIndex;
 	char brickType;
-
 	int red = 0;
 	int stupac = 0;
-	//std::cout << "\nSTART";
-	//std::cout << brickAlignment;
-	//std::cout << "FIN\n";
+
 
 	for (char& c : brickAlignment) {
 
@@ -143,10 +115,9 @@ BrickMap::BrickMap(float gridSize,
 			continue;
 		}
 
-		this->gridSizeU = 400;
-		int screenW = 1920;
-		int screenH = 1080;
-		int offset = 3;
+		int offset = this->levelInfo->columnSpacing;
+
+		float brickW = static_cast<float>(screen_width - offset * (maxSize.x + 1)) / maxSize.x;
 
 		if (c != ' ' && c != '\n') {
 			stupac--;
@@ -156,12 +127,11 @@ BrickMap::BrickMap(float gridSize,
 				new Brick(
 					stupac,
 					red,
-					/*screenW / (maxSize.x+3)*/
-					92.85f,
-					(screenH / (20.f) ),
+					brickW,
+					(screen_height / 20.f),
 					this->tileTextureSheet,
 					sf::IntRect(
-						400 * brickIndex,
+						this->gridSizeU * brickIndex,
 						0,
 						this->gridSizeU,
 						static_cast<int>(this->gridSizeU * 0.5f) ),
@@ -181,7 +151,6 @@ BrickMap::~BrickMap()
 	this->clear();
 }
 
-//Accessors
 const sf::Texture* BrickMap::getTileSheet() const
 {
 	return &this->tileTextureSheet;
@@ -205,6 +174,19 @@ void BrickMap::render(sf::RenderTarget& target)
 			}
 		}
 	}
+}
+
+void BrickMap::playSound(bool brickBroken, char brickType)
+{
+	if (brickBroken) {
+		this->breakSounds.at(brickType).stop();
+		this->breakSounds.at(brickType).play();
+	}
+	else {
+		this->hitSounds.at(brickType).stop();
+		this->hitSounds.at(brickType).play();
+	}
+
 }
 
 void BrickMap::addTile(

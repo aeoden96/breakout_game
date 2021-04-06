@@ -16,13 +16,16 @@ private:
 
 	ScoreSystem* scoreSystem;
 	XML_Level* levelInfo;
-	sf::Sound sound;
+	//sf::Sound sound;
 	
 	std::vector< std::vector< std::vector<Brick* > > > map; //XYZ coord 
 	std::string textureFile;
 	sf::Texture tileTextureSheet;
 	//std::map<BrickT,sf::IntRect> crackMap;
 	//now we can have null pointers in entire map
+	std::map<char, sf::Music> breakSounds;
+	std::map<char, sf::Music> hitSounds;
+
 
 	void clear();
 
@@ -32,14 +35,12 @@ public:
 	Brick* returnBrick(int i, int j);
 	void crackIt(int i, int j);
 
-	BrickMap(float gridSize, unsigned width, unsigned hight, std::string textureFile);
 	BrickMap(float gridSize,
 		unsigned width, 
 		unsigned hight, 
 		std::string textureFile,
 		XML_Level* levelInfo,
-		ScoreSystem* scoreSystem,
-		sf::SoundBuffer* soundBuffer);
+		ScoreSystem* scoreSystem);
 	virtual ~BrickMap();
 
 	//Accessors 
@@ -48,6 +49,8 @@ public:
 	//Functions 
 	void saveToFile(const std::string fileName);
 	void loadFromFile(const std::string fileName);
+
+	void playSound(bool brickBroken, char brickType);
 
 	//void updateBrickCollision(Entity* entity, const float& dt);
 	

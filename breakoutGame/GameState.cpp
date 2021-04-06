@@ -113,11 +113,12 @@ void GameState::initBrickMap()
 {//why gamestate has tilemap?
 
 	this->brickMap = new BrickMap(
-		/*this->stateData->gridSize*/ 100, 10, 10,
+		/*this->stateData->gridSize*/ 400, 
+		this->stateData->gfxSettings->resolution.width,
+		this->stateData->gfxSettings->resolution.height,
 		this->levelData->brickTexture,
 		this->levelData,
-		this->scoreSystem,
-		&buffer);
+		this->scoreSystem);
 }
 
 void GameState::initScoreSystem() {
@@ -127,7 +128,9 @@ void GameState::initScoreSystem() {
 
 void GameState::initCollisionSystem() {
 	this->collisionSystem =
-		new CollisionSystem(ball, player, brickMap,scoreSystem);
+		new CollisionSystem(ball, player, brickMap,scoreSystem,
+			this->stateData->gfxSettings->resolution.width,
+			this->stateData->gfxSettings->resolution.height);
 
 }
 
